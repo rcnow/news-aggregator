@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/static.css">
+    <title>News Aggregator</title>
+</head>
+<body>
+    <section class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo"><h3>News Aggregator</h3></div>
+            <nav class="sidebar-menu">
+                <a href="#" class="active">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="16" y="12" width="6" height="12" fill="black"/>
+                        <rect x="2" y="12" width="6" height="12" fill="black"/>
+                        <path d="M11.232 0.920905C11.6318 0.441524 12.3682 0.441523 12.768 0.920904L21.8903 11.8595C22.4334 12.5108 21.9703 13.5 21.1223 13.5H2.87772C2.02971 13.5 1.56662 12.5108 2.10974 11.8595L11.232 0.920905Z" fill="black"/>
+                    </svg>
+                    Main
+                </a>
+                <a href="#">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.5173 4.01731L13.9142 3.41421C13.649 3.149 13.5 2.78929 13.5 2.41421C13.5 1.63317 12.8668 1 12.0858 1H9.56155C8.64382 1 7.84385 1.62459 7.62127 2.51493L7.58402 2.66392C7.52842 2.88632 7.435 3.0975 7.30784 3.28824L6.90791 3.88813C6.65307 4.27039 6.22405 4.5 5.76462 4.5C5.58981 4.5 5.41661 4.46664 5.25431 4.40172L4.50672 4.10269C3.62859 3.75144 2.62446 4.06331 2.09984 4.85024L1.05023 6.42466C0.478465 7.2823 0.739643 8.44379 1.62351 8.97411C2.16728 9.30037 2.5 9.88801 2.5 10.5222V11.7984C2.5 12.2526 2.34544 12.6932 2.06174 13.0478L1.4679 13.7901C0.898121 14.5023 0.882383 15.5098 1.42964 16.2395L2.60337 17.8045C3.12259 18.4968 4.06261 18.7187 4.83662 18.3317C5.26137 18.1193 5.7531 18.0844 6.20363 18.2345L6.349 18.283C6.77093 18.4236 7.13394 18.7009 7.38064 19.071L7.74217 19.6132C7.91029 19.8654 8 20.1617 8 20.4648C8 21.3127 8.68733 22 9.53518 22H12.1972C12.9167 22 13.5 21.4167 13.5 20.6972C13.5 20.2616 13.7177 19.8549 14.0801 19.6132L15 19L15.3862 18.8069C15.784 18.608 16.2368 18.5474 16.6729 18.6346L17.264 18.7528C18.0193 18.9039 18.7941 18.6078 19.2563 17.9916L20.6 16.2C21.1333 15.4889 21.1351 14.5098 20.5877 13.8095C20.4054 13.5763 20.2166 13.3382 20.0427 13.1251C19.7073 12.7142 19.5 12.202 19.5 11.6716V10.3645C19.5 9.82027 19.9634 9.15242 20.3988 8.8259C21.1329 8.27534 21.1018 7.40264 20.5928 6.63915L19.4002 4.85024C18.8755 4.06331 17.8714 3.75144 16.9933 4.10269L16.2947 4.38213C16.1 4.45999 15.8923 4.5 15.6826 4.5C15.2455 4.5 14.8264 4.32637 14.5173 4.01731Z" fill="black" stroke="black"/>
+                        <circle cx="11" cy="11.5" r="4.5" fill="white"/>
+                    </svg>
+                    Setting
+                </a>
+            </nav>
+            <footer class="sidebar-footer">
+                <a href="#" id="addFeedButton">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="11" stroke="black" stroke-width="2"/>
+                            <path d="M12 3C12 18.1599 12 21.302 12 20.9781" stroke="black" stroke-width="2"/>
+                            <path d="M21 12C5.84009 12 2.69797 12 3.0219 12" stroke="black" stroke-width="2"/>
+                         </svg>
+                    Add</a>
+                <a href="#">
+                    <svg class="icon-q" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 7.8799C5 5.14387 7.11752 3.77585 7.11752 3.77585C7.6469 2.79807 13.1456 2.86383 15.1607 3.31984C17.1757 3.77585 17.7051 5.59986 17.8076 6.05586C17.91 6.51187 18.2345 7.87988 17.7051 9.2479C17.1757 10.6159 16.3219 10.4844 15.1607 11.0062C13.9995 11.5279 12.0869 12.3084 11.9844 13.2862C11.8819 14.264 11.8819 17 11.8819 17" stroke="black" stroke-width="3"/>
+                        <circle cx="12" cy="22" r="2" fill="#0B0B0B"/>
+                    </svg>
+                    Help</a>
+            </footer>
+        </div>
+        <!-- Feed List -->
+        <section class="feed-list">
+            <div class="header">
+                <h3>Today</h3>
+                <p>{{.todayDate}}</p>
+            </div>
+            <nav class="feed-menu">
+                <a href="#">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 4C17.1351 4 21.6396 4 22 4" stroke="black" stroke-width="2"/>
+                        <path d="M2 12C13.3514 12 16.7297 12 17 12" stroke="black" stroke-width="2"/>
+                        <path d="M2 20C17.1351 20 21.6396 20 22 20" stroke="black" stroke-width="2"/>
+                    </svg>
+                    All news <span class="count">{{.totalCount}}</span></a>
+                <a href="#">
+                    <svg class="icon-nofill " width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="8" r="3.5" fill="black" stroke="black"/>
+                        <path d="M1 8C8.15 -1.81777 16.4 -0.835995 23 8" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M1 8C8.15 17.8178 16.4 16.836 23 8" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                Not reading</a>
+                <a href="#">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.1033 1.81699C11.4701 1.07374 12.5299 1.07374 12.8967 1.81699L15.294 6.67446C15.4397 6.9696 15.7213 7.17417 16.047 7.2215L21.4075 8.00043C22.2277 8.11961 22.5552 9.12759 21.9617 9.70612L18.0828 13.4871C17.8471 13.7169 17.7396 14.0479 17.7952 14.3723L18.7109 19.7111C18.851 20.528 17.9936 21.151 17.26 20.7653L12.4653 18.2446C12.174 18.0915 11.826 18.0915 11.5347 18.2446L6.74005 20.7653C6.00642 21.151 5.14899 20.528 5.2891 19.7111L6.20479 14.3723C6.26043 14.0479 6.15288 13.7169 5.91719 13.4871L2.03827 9.70612C1.44476 9.12759 1.77226 8.11961 2.59249 8.00043L7.95302 7.2215C8.27873 7.17417 8.5603 6.9696 8.70596 6.67446L11.1033 1.81699Z" fill="black"/>
+                    </svg>
+                    Favorites</a>
+            </nav>
+        </section>
+        <!-- Feeder -->
+        <section class="feeder">
+            <div class="header">
+                <div class="header-bar">
+                    <h3>All news</h3>
+                    <div class="search-bar">
+                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="7.5" cy="7.5" r="6.5" stroke="black" stroke-width="2"/>
+                            <path d="M19.7536 20.7536L12 13" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <input type="text" id="searchInput"  placeholder="Search...">
+                    </div>
+                </div>
+                <div class="header-menu">
+                    <div class="element">
+                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5 10C15.5946 10 18.7477 10 19 10" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M7 16C14.5676 16 16.8198 16 17 16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 4C17.1351 4 21.6396 4 22 4" stroke="black" stroke-width="2"  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p>Filter</p>
+                    </div>
+                    <div class="element" id="sort-feed">
+                        <svg class="icon" id="sort-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 21C12 12.7714 12 5.57143 12 3" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M17 16L12 21L7 16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p>Sort</p>
+                    </div>
+                </div>
+            </div>
+            <section class="feed-view">
+                {{ if .loading }}
+                <div id="loading" class="loading">
+                    <h3>Loading...</h3>
+                </div>
+                {{ else }}
+                {{ range .newsItems }}
+                <div class="feed-item">
+                    <div class="feed-info">
+                        <h3>{{.Title}}</h3>
+                        <p>{{.Description}}</p>
+                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{.PubDate}}</span>
+                    </div>
+                </div>
+                {{ end }}
+                {{ end }}
+            </section>
+        </section>
+        <!-- Main View -->
+        <article class="main-view">
+            <h2>News Title</h2>
+            <div class="main-info">
+                <p>ChannelTitle</p>
+                <p>news news news news news </p>
+                <a href="#" class="button">Read more</a>
+            </div>
+        </article>
+    </section>
+    <script src="/static/main.js" defer></script>
+</body>
+</html>
