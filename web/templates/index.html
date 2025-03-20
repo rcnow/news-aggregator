@@ -13,10 +13,12 @@
             <div class="sidebar-logo"><h3>News Aggregator</h3></div>
             <nav class="sidebar-menu">
                 <a href="#" class="active">
-                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="16" y="12" width="6" height="12" fill="black"/>
-                        <rect x="2" y="12" width="6" height="12" fill="black"/>
-                        <path d="M11.232 0.920905C11.6318 0.441524 12.3682 0.441523 12.768 0.920904L21.8903 11.8595C22.4334 12.5108 21.9703 13.5 21.1223 13.5H2.87772C2.02971 13.5 1.56662 12.5108 2.10974 11.8595L11.232 0.920905Z" fill="black"/>
+                    <svg  class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 12V24" stroke="black" stroke-width="7"/>
+                        <path d="M20 12V24" stroke="black" stroke-width="7"/>
+                        <path d="M7 23L17 23" stroke="black" stroke-width="2"/>
+                        <path d="M11 0H13L24 12.5H0L11 0Z" fill="black"/>
+                        <path d="M21 3V12" stroke="black" stroke-width="3"/>
                     </svg>
                     Main
                 </a>
@@ -31,10 +33,10 @@
             <footer class="sidebar-footer">
                 <a href="#" id="addFeedButton">
                     <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="11" stroke="black" stroke-width="2"/>
-                            <path d="M12 3C12 18.1599 12 21.302 12 20.9781" stroke="black" stroke-width="2"/>
-                            <path d="M21 12C5.84009 12 2.69797 12 3.0219 12" stroke="black" stroke-width="2"/>
-                         </svg>
+                        <circle cx="12" cy="12" r="11.5" stroke="black"/>
+                        <path d="M3 12H21" stroke="black" stroke-width="2"/>
+                        <path d="M12 21L12 3" stroke="black" stroke-width="2"/>
+                    </svg>
                     Add</a>
                 <a href="#">
                     <svg class="icon-q" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,9 +55,9 @@
             <nav class="feed-menu">
                 <a href="#">
                     <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M2 4C17.1351 4 21.6396 4 22 4" stroke="black" stroke-width="2"/>
-                        <path d="M2 12C13.3514 12 16.7297 12 17 12" stroke="black" stroke-width="2"/>
-                        <path d="M2 20C17.1351 20 21.6396 20 22 20" stroke="black" stroke-width="2"/>
+                        <path d="M0 1.5H24" stroke="black" stroke-width="3"/>
+                        <path d="M0 12H17" stroke="black" stroke-width="3"/>
+                        <path d="M0 22.5H24" stroke="black" stroke-width="3"/>
                     </svg>
                     All news <span class="count">{{.totalCount}}</span></a>
                 <a href="#">
@@ -67,7 +69,7 @@
                 Not reading</a>
                 <a href="#">
                     <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.1033 1.81699C11.4701 1.07374 12.5299 1.07374 12.8967 1.81699L15.294 6.67446C15.4397 6.9696 15.7213 7.17417 16.047 7.2215L21.4075 8.00043C22.2277 8.11961 22.5552 9.12759 21.9617 9.70612L18.0828 13.4871C17.8471 13.7169 17.7396 14.0479 17.7952 14.3723L18.7109 19.7111C18.851 20.528 17.9936 21.151 17.26 20.7653L12.4653 18.2446C12.174 18.0915 11.826 18.0915 11.5347 18.2446L6.74005 20.7653C6.00642 21.151 5.14899 20.528 5.2891 19.7111L6.20479 14.3723C6.26043 14.0479 6.15288 13.7169 5.91719 13.4871L2.03827 9.70612C1.44476 9.12759 1.77226 8.11961 2.59249 8.00043L7.95302 7.2215C8.27873 7.17417 8.5603 6.9696 8.70596 6.67446L11.1033 1.81699Z" fill="black"/>
+                        <path d="M11.0719 1.91415C11.4076 1.07714 12.5924 1.07714 12.9281 1.91415L15.3409 7.93004C15.4818 8.28135 15.809 8.52299 16.1862 8.55436L22.5123 9.0803C23.3887 9.15317 23.7511 10.2404 23.0936 10.8245L18.221 15.153C17.9477 15.3958 17.8286 15.7684 17.9106 16.1247L19.3898 22.5557C19.5901 23.4264 18.635 24.1027 17.8802 23.6246L12.5351 20.2389C12.2084 20.032 11.7916 20.032 11.4649 20.2389L6.11983 23.6246C5.36504 24.1027 4.40989 23.4264 4.61017 22.5557L6.0894 16.1247C6.17136 15.7684 6.05232 15.3958 5.77898 15.153L0.906388 10.8245C0.248908 10.2404 0.611255 9.15317 1.48767 9.0803L7.8138 8.55436C8.19101 8.52299 8.51818 8.28135 8.65908 7.93004L11.0719 1.91415Z" fill="black"/>
                     </svg>
                     Favorites</a>
             </nav>
@@ -88,9 +90,9 @@
                 <div class="header-menu">
                     <div class="element">
                         <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5 10C15.5946 10 18.7477 10 19 10" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M7 16C14.5676 16 16.8198 16 17 16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M2 4C17.1351 4 21.6396 4 22 4" stroke="black" stroke-width="2"  stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20 23H4" stroke="black" stroke-width="3"/>
+                            <path d="M24 1H0" stroke="black" stroke-width="3"/>
+                            <path d="M22 12H2" stroke="black" stroke-width="3"/>
                         </svg>
                         <p>Filter</p>
                         <div class="filter-popup">
@@ -114,9 +116,9 @@
                         </div>
                     </div>
                     <div class="element" id="sort-feed">
-                        <svg class="icon" id="sort-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 21C12 12.7714 12 5.57143 12 3" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M17 16L12 21L7 16" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <svg class="icon-nofill" id="sort-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 20C9 10.8571 9 2.85714 9 0" stroke="black" stroke-width="3"/>
+                            <path d="M2 11.45L9.04286 21.45L16.5 11.45" stroke="black" stroke-width="3"/>
                         </svg>
                         <p>Sort</p>
                     </div>

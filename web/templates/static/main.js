@@ -54,11 +54,11 @@ function sortNews() {
         const svg = document.getElementById('sort-icon');
         const paths = svg.querySelectorAll('path');
         if (isSorting) {
-            paths[0].setAttribute('d', 'M12 21C12 12.7714 12 5.57143 12 3');
-            paths[1].setAttribute('d', 'M7 8L12 3L17 8');
+            paths[0].setAttribute('d', 'M9 24C9 14.8571 9 6.85714 9 4');
+            paths[1].setAttribute('d', 'M2 12.45L9.04286 2.45L16.5 12.45');
         } else {
-            paths[0].setAttribute('d', 'M12 3C12 12.2286 12 19.4286 12 21');
-            paths[1].setAttribute('d', 'M7 16L12 21L17 16');
+            paths[0].setAttribute('d', 'M9 20C9 10.8571 9 2.85714 9 0');
+            paths[1].setAttribute('d', 'M2 11.45L9.04286 21.45L16.5 11.45');
         }
         isSorting = !isSorting;
     })
