@@ -12,7 +12,7 @@ func StartWebServer() {
 
 	handlers.HandleStaticFiles()
 	http.HandleFunc("/", handlers.HandleIndex)
-	http.HandleFunc("/filter-news", handlers.HandleFilterNews)
+	http.HandleFunc("/filter-news", handlers.HandleLoadNews)
 	http.HandleFunc("/add-feed", handlers.HandleAddFeedForm)
 	http.HandleFunc("/sort-news", handlers.HandleSortNews)
 

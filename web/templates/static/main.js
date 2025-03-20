@@ -77,3 +77,17 @@ document.getElementById('addFeedButton').addEventListener('click', function() {
         })
         .catch(error => console.error('Error loading form:', error));
 });
+
+document.querySelectorAll('.filter-popup input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const selectedValue = this.value;
+        fetch(`/sort-news?hours=${selectedValue}`, {
+            method: 'GET',
+        })
+        .then(response => response.text())
+        .then(html => {
+            document.querySelector('.feed-view').innerHTML = html;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+});

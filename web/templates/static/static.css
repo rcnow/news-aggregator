@@ -10,6 +10,7 @@ body {
 .container {
     display: flex;
     flex: 1;
+    flex-direction: row;
 }
 
 .sidebar {
@@ -336,9 +337,6 @@ body {
     fill: orange;
 }
 
-.element:hover p {
-    color: orange;
-}
 
 .loading {
     text-align: center;
@@ -352,4 +350,54 @@ body {
     border-radius: 5px;
     padding: 5px 10px;
     margin-left: 10px;
+}
+
+.filter-popup {
+    color: #555;
+    font-size: 14px;
+    display: none;
+    position: absolute;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #cbcbcb;
+    padding: 10px;
+    box-shadow: 1px 1px 8px 0px orange;
+    z-index: 1000;
+    top: 30px;
+    left: 0;
+    min-width: 125px;
+    width: auto;
+}
+
+.element {
+    position: relative;
+}
+
+.element:hover .filter-popup {
+    display: block;
+}
+.filter-popup p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.filter-popup label {
+    display: block;
+    margin: 5px 0 5px 0px;
+}
+.filter-popup .radio-item:hover {
+    color: orange;
+    cursor: pointer;
+
+}
+.filter-popup .radio-item:hover input[type="radio"] {
+    accent-color: orange;
+}
+
+.filter-popup .radio-item:hover .radio-label {
+    color: orange;
+}
+
+.filter-popup input[type="radio"] {
+    accent-color: orange;
 }

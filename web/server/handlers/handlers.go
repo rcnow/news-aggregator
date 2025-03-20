@@ -8,6 +8,7 @@ import (
 	"news-aggregator/models"
 	"news-aggregator/utils"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -23,10 +24,14 @@ func UpdateNews() {
 		feeds := []string{
 			"https://cointelegraph.com/rss",
 			"https://bitcoinmagazine.com/feed",
+			"https://feeds.bloomberg.com/markets/news.rss",
+			"https://ir.thomsonreuters.com/rss/news-releases.xml?items=15",
+			"https://www.reddit.com/r/birding.rss",
+			//"https://feeds.bbci.co.uk/news/world/rss.xml",
 		}
 		var items []models.NewsItem
 		for _, feed := range feeds {
-			news, _ := fetcher.FetchNews(feed)
+			news := fetcher.FetchNews(feed)
 			//log.Printf("Loaded %d news items from %s\n", len(news), feed)
 			// log.Printf("Loaded %d news items from %s (ChannelLink: %s)\n", len(news), feed, channelLink)
 			items = append(items, news...)
@@ -77,7 +82,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleFilterNews(w http.ResponseWriter, r *http.Request) {
+func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 	query := r.FormValue("query")
 
 	mu.Lock()
@@ -121,17 +126,34 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	sortOrder := r.Header.Get("Sort-Order")
-	if len(newsItems) > 1 {
-		sort.Slice(newsItems, func(i, k int) bool {
+	hoursStr := r.URL.Query().Get("hours")
+	hours, err := strconv.Atoi(hoursStr)
+	if err != nil {
+		hours = 24
+	}
 
-			dateI, errI := time.Parse("02.01.2006 15:04", newsItems[i].PubDate)
-			dateK, errK := time.Parse("02.01.2006 15:04", newsItems[k].PubDate)
+	now := time.Now().UTC()
+	var filteredItems []models.NewsItem
+	for _, item := range newsItems {
+		pubDate, err := time.Parse("02.01.2006 15:04", item.PubDate)
+		if err != nil {
+			log.Println("Error parsing date:", err)
+			continue
+		}
+		if now.Sub(pubDate) <= time.Duration(hours)*time.Hour {
+			filteredItems = append(filteredItems, item)
+		}
+	}
+
+	sortOrder := r.Header.Get("Sort-Order")
+	if len(filteredItems) > 1 {
+		sort.Slice(filteredItems, func(i, k int) bool {
+			dateI, errI := time.Parse("02.01.2006 15:04", filteredItems[i].PubDate)
+			dateK, errK := time.Parse("02.01.2006 15:04", filteredItems[k].PubDate)
 			if errI != nil || errK != nil {
 				log.Println("Error parsing date:", errI, errK)
 				return false
 			}
-
 			if sortOrder == "asc" {
 				return dateI.Before(dateK)
 			} else {
@@ -139,19 +161,19 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 			}
 		})
 	}
+
 	tmpl := template.Must(template.New("news").Parse(`
-                 {{ range . }}
-                <div class="feed-item">
-                    <div class="feed-info">
-                        <h3>{{.Title}}</h3>
-                        <p>{{.Description}}</p>
-                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{.PubDate}}</span>
-                    </div>
-                </div>
-                {{ end }}
-	`))
-	err := tmpl.Execute(w, newsItems)
-	if err != nil {
+        {{ range . }}
+        <div class="feed-item">
+            <div class="feed-info">
+                <h3>{{.Title}}</h3>
+                <p>{{.Description}}</p>
+                <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{.PubDate}}</span>
+            </div>
+        </div>
+        {{ end }}
+    `))
+	if err := tmpl.Execute(w, filteredItems); err != nil {
 		log.Println("Error rendering filtered news:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
