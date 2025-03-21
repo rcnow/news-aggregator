@@ -11,6 +11,7 @@ pkg/
 *.DS_Store
 .env
 *.xml
+TODO
 
 vendor/
 

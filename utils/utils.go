@@ -54,7 +54,3 @@ func FormatDate(dateStr string) string {
 	}
 	return t.UTC().Format("02.01.2006 15:04")
 }
-
-func GetCurrentDate() string {
-	return time.Now().Format("02.01.2006")
-}
