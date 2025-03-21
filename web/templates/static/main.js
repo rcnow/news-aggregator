@@ -47,10 +47,12 @@ function sortNews() {
             'Sort-Order': isSorting ? 'asc' : 'desc'
         }
     })
-    .then(response => response.text())
-    .then(html => {
+    .then(response => response.json())
+    .then(data => {
         const feedContainer = document.getElementsByClassName('feed-view')[0];
-        feedContainer.innerHTML = html;
+        feedContainer.innerHTML = data.feedViewHTML;
+        document.querySelector('.count').textContent = data.totalCount;
+
         const svg = document.getElementById('sort-icon');
         const paths = svg.querySelectorAll('path');
         if (isSorting) {
@@ -84,9 +86,10 @@ document.querySelectorAll('.filter-popup input[type="radio"]').forEach(radio => 
         fetch(`/sort-news?hours=${selectedValue}`, {
             method: 'GET',
         })
-        .then(response => response.text())
-        .then(html => {
-            document.querySelector('.feed-view').innerHTML = html;
+        .then(response => response.json())
+        .then(data => {
+            document.querySelector('.feed-view').innerHTML = data.feedViewHTML;
+            document.querySelector('.count').textContent = data.totalCount;
         })
         .catch(error => console.error('Error:', error));
     });
