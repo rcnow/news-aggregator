@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -164,6 +166,7 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
+
 	hoursStr := r.URL.Query().Get("hours")
 	if hoursStr != "" {
 		hours, err := strconv.Atoi(hoursStr)
@@ -210,7 +213,7 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 		timeFilter, sortFilter, len(newsItems), len(filterItems))
 
 	tmpl := template.Must(template.New("news").Parse(`
-        {{ range . }}
+        {{ range .newsItems }}
         <div class="feed-item">
             <div class="feed-info">
                 <h3>{{.Title}}</h3>
@@ -220,12 +223,24 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
         </div>
         {{ end }}
     `))
-	if err := tmpl.Execute(w, filterItems); err != nil {
-		log.Println("Error rendering filtered news:", err)
+	var feedViewHTML bytes.Buffer
+	err := tmpl.Execute(&feedViewHTML, map[string]interface{}{
+		"newsItems": filterItems,
+	})
+	if err != nil {
+		log.Println("Error rendering feed-view template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
-}
 
+	response := map[string]interface{}{
+		"feedViewHTML": feedViewHTML.String(),
+		"totalCount":   len(filterItems),
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
+}
 func HandleAddFeedForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.New("add-feed-form").Parse(`
 	            <h2>Add new feed </h2>
