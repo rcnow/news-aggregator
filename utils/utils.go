@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"log"
+	"news-aggregator/models"
+	"sort"
 	"strings"
 	"time"
 )
@@ -47,4 +50,44 @@ func FormatDate(dateStr string) string {
 		return dateStr
 	}
 	return t.UTC().Format("02.01.2006 15:04")
+}
+
+func FilterNewsByTime(newsItems []models.NewsItem, timeFilter time.Duration, sortFilter string) []models.NewsItem {
+	var filteredItems []models.NewsItem
+	now := time.Now().UTC()
+
+	for _, item := range newsItems {
+		pubDate, err := time.Parse("02.01.2006 15:04", item.PubDate)
+		if err != nil {
+			log.Println("Error parsing date:", err)
+			continue
+		}
+		if now.Sub(pubDate) <= timeFilter {
+			filteredItems = append(filteredItems, item)
+		}
+	}
+	log.Printf("FilterNewsByTime - TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
+		timeFilter, sortFilter, len(newsItems), len(filteredItems))
+
+	return filteredItems
+}
+
+func SortNewsByDate(filteredItems []models.NewsItem, timeFilter time.Duration, sortFilter string) []models.NewsItem {
+	sort.Slice(filteredItems, func(i, j int) bool {
+		dateI, errI := time.Parse("02.01.2006 15:04", filteredItems[i].PubDate)
+		dateJ, errJ := time.Parse("02.01.2006 15:04", filteredItems[j].PubDate)
+		if errI != nil || errJ != nil {
+			log.Println("Error parsing date for sorting:", errI, errJ)
+			return false
+		}
+		if sortFilter == "asc" {
+			return dateI.Before(dateJ)
+		} else {
+			return dateI.After(dateJ)
+		}
+	})
+	log.Printf("SortNewsByDate - TimeFilter: %v, SortFilter: %s, Filtered items: %d\n",
+		timeFilter, sortFilter, len(filteredItems))
+
+	return filteredItems
 }

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"news-aggregator/fetcher"
 	"news-aggregator/models"
-	"sort"
+	"news-aggregator/utils"
 	"strconv"
 	"strings"
 	"sync"
@@ -46,38 +46,11 @@ func UpdateNews() {
 		timeFilter = 24 * time.Hour
 		sortFilter = "desc"
 
-		now := time.Now().UTC()
-		filterItems = nil
-
-		for _, item := range newsItems {
-			pubDate, err := time.Parse("02.01.2006 15:04", item.PubDate)
-			if err != nil {
-				log.Println("Error parsing date:", err)
-				continue
-			}
-			if now.Sub(pubDate) <= timeFilter {
-				filterItems = append(filterItems, item)
-			}
-		}
-
-		sort.Slice(filterItems, func(i, j int) bool {
-			dateI, errI := time.Parse("02.01.2006 15:04", filterItems[i].PubDate)
-			dateJ, errJ := time.Parse("02.01.2006 15:04", filterItems[j].PubDate)
-			if errI != nil || errJ != nil {
-				log.Println("Error parsing date for sorting:", errI, errJ)
-				return false
-			}
-			if sortFilter == "asc" {
-				return dateI.Before(dateJ)
-			} else {
-				return dateI.After(dateJ)
-			}
-		})
+		filterItems = newsItems
+		filterItems = utils.FilterNewsByTime(filterItems, timeFilter, sortFilter)
+		filterItems = utils.SortNewsByDate(filterItems, timeFilter, sortFilter)
 
 		mu.Unlock()
-
-		log.Printf("TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
-			timeFilter, sortFilter, len(newsItems), len(filterItems))
 
 		time.Sleep(30 * time.Minute)
 	}
@@ -100,14 +73,14 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	defer mu.Unlock()
 
 	if len(filterItems) == 0 {
-		err = tmpl.Execute(w, map[string]interface{}{
+		err = tmpl.Execute(w, map[string]any{
 			"newsItems":  []models.NewsItem{},
 			"todayDate":  todayDate,
 			"totalCount": 0,
 			"loading":    true,
 		})
 	} else {
-		err = tmpl.Execute(w, map[string]interface{}{
+		err = tmpl.Execute(w, map[string]any{
 			"newsItems":  filterItems,
 			"todayDate":  todayDate,
 			"totalCount": len(filterItems),
@@ -115,8 +88,6 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	// log.Printf("TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
-	// 	timeFilter, sortFilter, len(newsItems), len(filterItems))
 	if err != nil {
 		log.Println("Error rendering template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -174,18 +145,6 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 			hours = 24
 		}
 		timeFilter = time.Duration(hours) * time.Hour
-		now := time.Now().UTC()
-		filterItems = nil
-		for _, item := range newsItems {
-			pubDate, err := time.Parse("02.01.2006 15:04", item.PubDate)
-			if err != nil {
-				log.Println("Error parsing date:", err)
-				continue
-			}
-			if now.Sub(pubDate) <= timeFilter {
-				filterItems = append(filterItems, item)
-			}
-		}
 	}
 
 	sortOrder := r.Header.Get("Sort-Order")
@@ -193,21 +152,9 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 		sortFilter = sortOrder
 	}
 
-	if len(filterItems) > 1 {
-		sort.Slice(filterItems, func(i, k int) bool {
-			dateI, errI := time.Parse("02.01.2006 15:04", filterItems[i].PubDate)
-			dateK, errK := time.Parse("02.01.2006 15:04", filterItems[k].PubDate)
-			if errI != nil || errK != nil {
-				log.Println("Error parsing date:", errI, errK)
-				return false
-			}
-			if sortFilter == "asc" {
-				return dateI.Before(dateK)
-			} else {
-				return dateI.After(dateK)
-			}
-		})
-	}
+	filteredItems := utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
+	filteredItems = utils.SortNewsByDate(filteredItems, timeFilter, sortFilter)
+	filterItems = filteredItems
 
 	log.Printf("TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
 		timeFilter, sortFilter, len(newsItems), len(filterItems))
@@ -223,6 +170,7 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
         </div>
         {{ end }}
     `))
+
 	var feedViewHTML bytes.Buffer
 	err := tmpl.Execute(&feedViewHTML, map[string]interface{}{
 		"newsItems": filterItems,
@@ -241,6 +189,7 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
+
 func HandleAddFeedForm(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.New("add-feed-form").Parse(`
 	            <h2>Add new feed </h2>
