@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"regexp"
 	"strings"
 	"time"
 )
@@ -20,11 +19,6 @@ func StripHTMLTags(html string) string {
 		}
 	}
 	return result.String()
-}
-
-func stripHTMLTagsReg(html string) string {
-	re := regexp.MustCompile(`<[^>]*>`)
-	return re.ReplaceAllString(html, "")
 }
 
 func FormatDate(dateStr string) string {

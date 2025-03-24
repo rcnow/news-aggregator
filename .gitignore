@@ -12,6 +12,7 @@ pkg/
 .env
 *.xml
 TODO
+*_test.go
 
 vendor/
 
