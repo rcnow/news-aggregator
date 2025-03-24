@@ -98,27 +98,32 @@
                         <div class="filter-popup">
                             <p>Show news for ...</p>
                             <label class="radio-item">
-                                <input type="radio" name="filter" value="24" checked>
+                                <input type="radio" name="filter" value="24" {{if eq .timeFilterValue 24}}checked{{end}}>
                                 <span class="radio-label">24 hours</span>
                             </label>
                             <label class="radio-item">
-                                <input type="radio" name="filter" value="12">
+                                <input type="radio" name="filter" value="12" {{if eq .timeFilterValue 12}}checked{{end}}>
                                 <span class="radio-label">12 hours</span>
                             </label>
                             <label class="radio-item">
-                                <input type="radio" name="filter" value="6">
+                                <input type="radio" name="filter" value="6"{{if eq .timeFilterValue 6}}checked{{end}}>
                                 <span class="radio-label">6 hours</span>
                             </label>
                             <label class="radio-item">
-                                <input type="radio" name="filter" value="1">
+                                <input type="radio" name="filter" value="1"{{if eq .timeFilterValue 1}}checked{{end}}>
                                 <span class="radio-label">1 hour</span>
                             </label>
                         </div>
                     </div>
-                    <div class="element" id="sort-feed">
+                    <div class="element" id="sort-feed" data-sort="{{.sortFilter}}">
                         <svg class="icon-nofill" id="sort-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            {{ if eq .sortFilter "desc" }}
                             <path d="M9 20C9 10.8571 9 2.85714 9 0" stroke="black" stroke-width="3"/>
                             <path d="M2 11.45L9.04286 21.45L16.5 11.45" stroke="black" stroke-width="3"/>
+                            {{ else }}
+                            <path d="M9 24C9 14.8571 9 6.85714 9 4" stroke="black" stroke-width="3"/>
+                            <path d="M2 12.45L9.04286 2.45L16.5 12.45" stroke="black" stroke-width="3"/>
+                            {{ end}}
                         </svg>
                         <p>Sort</p>
                     </div>

@@ -11,6 +11,7 @@ body {
     display: flex;
     flex: 1;
     flex-direction: row;
+    max-width: 100%;
 }
 
 .sidebar {
@@ -191,6 +192,9 @@ body {
 .feed-view {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 .feed-view::-webkit-scrollbar {
     width: 5px;

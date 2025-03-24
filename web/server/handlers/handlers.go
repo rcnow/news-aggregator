@@ -74,17 +74,21 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 
 	if len(filterItems) == 0 {
 		err = tmpl.Execute(w, map[string]any{
-			"newsItems":  []models.NewsItem{},
-			"todayDate":  todayDate,
-			"totalCount": 0,
-			"loading":    true,
+			"newsItems":       []models.NewsItem{},
+			"todayDate":       todayDate,
+			"totalCount":      0,
+			"loading":         true,
+			"timeFilterValue": timeFilter,
+			"sortFilter":      sortFilter,
 		})
 	} else {
 		err = tmpl.Execute(w, map[string]any{
-			"newsItems":  filterItems,
-			"todayDate":  todayDate,
-			"totalCount": len(filterItems),
-			"loading":    false,
+			"newsItems":       filterItems,
+			"todayDate":       todayDate,
+			"totalCount":      len(filterItems),
+			"loading":         false,
+			"timeFilterValue": int(timeFilter.Hours()),
+			"sortFilter":      sortFilter,
 		})
 	}
 
@@ -182,8 +186,10 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"feedViewHTML": feedViewHTML.String(),
-		"totalCount":   len(filterItems),
+		"feedViewHTML":    feedViewHTML.String(),
+		"totalCount":      len(filterItems),
+		"timeFilterValue": int(timeFilter.Hours()),
+		"sortFilter":      sortFilter,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

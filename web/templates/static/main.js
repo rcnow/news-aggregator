@@ -1,7 +1,6 @@
 let timeoutId;
-let isSorting = true;
 
-
+document.getElementById('searchInput').addEventListener('input', filterNews);
 function filterNews() {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
@@ -40,11 +39,14 @@ function filterNews() {
 
 document.getElementById('sort-feed').addEventListener('click', sortNews);
 function sortNews() {
-    console.log(isSorting);
+    const sortfeedElement = document.getElementById('sort-feed');
+    const currentSort = sortfeedElement.dataset.sort;
+    const newSort = currentSort === 'desc' ? 'asc' : 'desc';
+
     fetch('/sort-news', {
         method: 'GET',
         headers: {
-            'Sort-Order': isSorting ? 'asc' : 'desc'
+            'Sort-Order': newSort
         }
     })
     .then(response => response.json())
@@ -55,21 +57,19 @@ function sortNews() {
 
         const svg = document.getElementById('sort-icon');
         const paths = svg.querySelectorAll('path');
-        if (isSorting) {
+        if (newSort === 'asc') {
             paths[0].setAttribute('d', 'M9 24C9 14.8571 9 6.85714 9 4');
             paths[1].setAttribute('d', 'M2 12.45L9.04286 2.45L16.5 12.45');
         } else {
             paths[0].setAttribute('d', 'M9 20C9 10.8571 9 2.85714 9 0');
             paths[1].setAttribute('d', 'M2 11.45L9.04286 21.45L16.5 11.45');
         }
-        isSorting = !isSorting;
+        sortfeedElement.dataset.sort = newSort;
     })
     .catch(error => {
         console.error('Error:', error);
     });
 }
-
-document.getElementById('searchInput').addEventListener('input', filterNews);
 
 document.getElementById('addFeedButton').addEventListener('click', function() {
     fetch('/add-feed')
