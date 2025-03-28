@@ -134,6 +134,7 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 	mu.Unlock()
 
 	var tmpl *template.Template
+	var err error
 	if len(filteredItems) == 0 {
 		tmpl = template.Must(template.New("no-news").Parse(`
 		<div class="feed-item">
@@ -150,7 +151,7 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 					return t.Format("02.01.2006 15:04:05")
 				},
 			}).Parse(`
-                {{ range .NewsItems }}
+                {{ range . }}
                     <div class="feed-item">
                     <div class="feed-info">
                         <h3>{{.Title}}</h3>
@@ -162,7 +163,7 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 		`))
 	}
 
-	err := tmpl.Execute(w, filteredItems)
+	err = tmpl.Execute(w, filteredItems)
 	if err != nil {
 		log.Println("Error rendering filtered news:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
