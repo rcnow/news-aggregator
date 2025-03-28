@@ -73,6 +73,12 @@
                     </svg>
                     Favorites</a>
             </nav>
+            <nav class="channel-menu">
+                {{ range .uniqueItems }}
+                <a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a>
+                {{ end }}
+            </nav>
+            </nav>
         </section>
         <!-- Feeder -->
         <section class="feeder">
@@ -139,7 +145,7 @@
                 <div class="feed-item">
                     <div class="feed-info">
                         <h3>{{.Title}}</h3>
-                        <p>{{.Description}}</p>
+                        <p>{{ truncate .Description 150 }}</p>
                         <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{.PubDate}}</span>
                     </div>
                 </div>

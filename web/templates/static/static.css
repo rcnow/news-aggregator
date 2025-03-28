@@ -20,6 +20,7 @@ body {
     background-color: #eeeff0;
     border-right: 1px solid #cbcbcb;
     height: 100vh;
+    flex: 1;
 }
 
 .sidebar-logo {
@@ -129,6 +130,8 @@ body {
     flex-direction: column;
     width: 10%;
     border-right: 1px solid #cbcbcb;
+    flex: 1;
+    background-color: #eeeff0;
 }
 
 .header {
@@ -166,22 +169,37 @@ body {
     display: flex;
     flex-direction: column;
     padding: 10px;
-    background-color: #eeeff0;
-    height: 100vh;
 }
 
 .feed-menu a {
+    display: flex;
     padding: 10px;
     text-decoration: none;
     color: #555;
     border-radius: 5px;
     transition: background-color 0.5s ease;
+    align-items: center;
 }
 
 .feed-menu a:hover {
     background-color: orange;
 }
 
+.channel-menu {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-top: 1px solid #cbcbcb;
+}
+.channel-menu  a {
+    display: flex;
+    padding: 10px;
+    text-decoration: none;
+    color: #555;
+    border-radius: 5px;
+    transition: background-color 0.5s ease;
+    align-items: center;
+}
 .feeder {
     flex: 1;
     display: flex;
@@ -252,7 +270,7 @@ body {
 }
 
 .main-view {
-    flex: 2;
+    flex: 3;
     padding: 0;
     margin: 0;
     border-left: 1px solid #cbcbcb;
@@ -360,7 +378,7 @@ body {
     background: aquamarine;
     border-radius: 5px;
     padding: 5px 10px;
-    margin-left: 10px;
+    margin-left: auto;
 }
 
 .filter-popup {

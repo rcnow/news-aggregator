@@ -61,7 +61,13 @@ func HandleStaticFiles() {
 }
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.New("index.html").Funcs(template.FuncMap{}).ParseFiles("web/templates/index.html")
+	tmpl, err := template.New("index.html").
+		Funcs(template.FuncMap{
+			"truncate": func(html template.HTML, length int) string {
+				return string(utils.TruncateDescription(html, length))
+			},
+		}).
+		ParseFiles("web/templates/index.html")
 	if err != nil {
 		log.Println("Error parsing template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -72,9 +78,22 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
+	uniqueLinks := make(map[string]models.NewsItem)
+	for _, item := range filterItems {
+		if _, exists := uniqueLinks[item.ChannelLink]; !exists {
+			uniqueLinks[item.ChannelLink] = item
+		}
+	}
+
+	var uniqueItems []models.NewsItem
+	for _, item := range uniqueLinks {
+		uniqueItems = append(uniqueItems, item)
+	}
+
 	if len(filterItems) == 0 {
 		err = tmpl.Execute(w, map[string]any{
 			"newsItems":       []models.NewsItem{},
+			"uniqueItems":     []models.NewsItem{},
 			"todayDate":       todayDate,
 			"totalCount":      0,
 			"loading":         true,
@@ -84,6 +103,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	} else {
 		err = tmpl.Execute(w, map[string]any{
 			"newsItems":       filterItems,
+			"uniqueItems":     uniqueItems,
 			"todayDate":       todayDate,
 			"totalCount":      len(filterItems),
 			"loading":         false,

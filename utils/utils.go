@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"html/template"
 	"log"
 	"news-aggregator/models"
 	"sort"
@@ -90,4 +91,19 @@ func SortNewsByDate(filteredItems []models.NewsItem, timeFilter time.Duration, s
 		timeFilter, sortFilter, len(filteredItems))
 
 	return filteredItems
+}
+
+func TruncateDescription(description template.HTML, maxLen int) template.HTML {
+	descStr := string(description)
+	if len(descStr) <= maxLen {
+		return description
+	}
+
+	truncated := descStr[:maxLen]
+
+	if lastSpace := strings.LastIndex(truncated, " "); lastSpace > 0 {
+		truncated = truncated[:lastSpace]
+	}
+
+	return template.HTML(strings.TrimSpace(truncated) + "…")
 }
