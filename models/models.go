@@ -1,12 +1,15 @@
 package models
 
-import "html/template"
+import (
+	"html/template"
+	"time"
+)
 
 type NewsItem struct {
 	Title        string        `json:"title"`
 	Description  template.HTML `json:"description"`
 	Link         string        `json:"link"`
-	PubDate      string        `json:"pubDate"`
+	PubDate      time.Time     `json:"pubDate"`
 	Content      template.HTML `json:"content"`
 	MediaURL     string        `json:"mediaURL"`
 	Creator      string        `json:"creator"`

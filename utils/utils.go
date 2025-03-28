@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"news-aggregator/models"
@@ -25,32 +26,28 @@ func StripHTMLTags(html string) string {
 	return result.String()
 }
 
-func FormatDate(dateStr string) string {
+func FormatDate(dateStr string) (time.Time, error) {
+	dateStr = strings.TrimSpace(dateStr)
+	if dateStr == "" {
+		return time.Time{}, fmt.Errorf("empty date string")
+	}
+
 	formats := []string{
 		time.RFC3339,
 		time.RFC1123Z,
 		time.RFC1123,
 		time.RFC822,
 		time.RFC822Z,
-		"Mon, 02 Jan 2006 15:04:05 MST",
-		"Mon, 02 Jan 2006 15:04:05 -0700",
-		"02 Jan 2006 15:04:05 MST",
-		"02 Jan 2006 15:04:05 -0700",
 	}
-
-	var t time.Time
-	var err error
 
 	for _, format := range formats {
-		t, err = time.Parse(format, dateStr)
+		t, err := time.Parse(format, dateStr)
 		if err == nil {
-			break
+			return t.Local(), nil
 		}
 	}
-	if err != nil {
-		return dateStr
-	}
-	return t.UTC().Format("02.01.2006 15:04")
+
+	return time.Time{}, fmt.Errorf("unrecognized date format: %s", dateStr)
 }
 
 func FilterNewsByTime(newsItems []models.NewsItem, timeFilter time.Duration, sortFilter string) []models.NewsItem {
@@ -58,15 +55,11 @@ func FilterNewsByTime(newsItems []models.NewsItem, timeFilter time.Duration, sor
 	now := time.Now().UTC()
 
 	for _, item := range newsItems {
-		pubDate, err := time.Parse("02.01.2006 15:04", item.PubDate)
-		if err != nil {
-			log.Println("Error parsing date:", err)
-			continue
-		}
-		if now.Sub(pubDate) <= timeFilter {
+		if now.Sub(item.PubDate) <= timeFilter {
 			filteredItems = append(filteredItems, item)
 		}
 	}
+
 	log.Printf("FilterNewsByTime - TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
 		timeFilter, sortFilter, len(newsItems), len(filteredItems))
 
@@ -75,18 +68,12 @@ func FilterNewsByTime(newsItems []models.NewsItem, timeFilter time.Duration, sor
 
 func SortNewsByDate(filteredItems []models.NewsItem, timeFilter time.Duration, sortFilter string) []models.NewsItem {
 	sort.Slice(filteredItems, func(i, j int) bool {
-		dateI, errI := time.Parse("02.01.2006 15:04", filteredItems[i].PubDate)
-		dateJ, errJ := time.Parse("02.01.2006 15:04", filteredItems[j].PubDate)
-		if errI != nil || errJ != nil {
-			log.Println("Error parsing date for sorting:", errI, errJ)
-			return false
-		}
 		if sortFilter == "asc" {
-			return dateI.Before(dateJ)
-		} else {
-			return dateI.After(dateJ)
+			return filteredItems[i].PubDate.Before(filteredItems[j].PubDate)
 		}
+		return filteredItems[i].PubDate.After(filteredItems[j].PubDate)
 	})
+
 	log.Printf("SortNewsByDate - TimeFilter: %v, SortFilter: %s, Filtered items: %d\n",
 		timeFilter, sortFilter, len(filteredItems))
 
@@ -105,5 +92,5 @@ func TruncateDescription(description template.HTML, maxLen int) template.HTML {
 		truncated = truncated[:lastSpace]
 	}
 
-	return template.HTML(strings.TrimSpace(truncated) + "…")
+	return template.HTML(strings.TrimSpace(truncated) + " …")
 }

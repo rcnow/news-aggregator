@@ -44,18 +44,24 @@ func ParseAtom(body []byte) []models.NewsItem {
 	}
 	var items []models.NewsItem
 	for _, entry := range atom.Entries {
+		pubTime, err := utils.FormatDate(entry.Updated)
+		if err != nil {
+			log.Printf("Failed to parse date '%s' for entry '%s': %v",
+				entry.Updated, entry.Title, err)
+			continue
+		}
+
 		cleanedDescription := utils.StripHTMLTags(string(entry.Content))
-		formattedDate := utils.FormatDate(entry.Updated)
 		items = append(items, models.NewsItem{
 			Title:        entry.Title,
 			Description:  template.HTML(cleanedDescription),
 			Link:         entry.Link.Href,
-			PubDate:      formattedDate,
+			PubDate:      pubTime,
 			Content:      entry.Content,
 			ChannelLink:  channelLink,
-			ChannelTitle: atom.Title})
+			ChannelTitle: atom.Title,
+		})
 	}
 
 	return items
-
 }

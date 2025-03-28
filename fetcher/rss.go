@@ -64,11 +64,17 @@ func ParseRSS(body []byte) []models.NewsItem {
 	var items []models.NewsItem
 	for _, item := range rss.Channel.Items {
 		cleanedDescription := utils.StripHTMLTags(string(item.Description))
+		pubTime, err := utils.FormatDate(item.PubDate)
+		if err != nil {
+			log.Printf("Failed to parse date '%s' for item '%s': %v",
+				item.PubDate, item.Title, err)
+			continue
+		}
 		items = append(items, models.NewsItem{
 			Title:        item.Title,
 			Description:  template.HTML(cleanedDescription),
 			Link:         item.Link,
-			PubDate:      utils.FormatDate(item.PubDate),
+			PubDate:      pubTime,
 			Content:      item.Content,
 			MediaURL:     item.Media.URL,
 			Creator:      item.Creator,

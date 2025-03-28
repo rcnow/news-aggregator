@@ -66,6 +66,9 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 			"truncate": func(html template.HTML, length int) string {
 				return string(utils.TruncateDescription(html, length))
 			},
+			"formatDate": func(t time.Time) string {
+				return t.Format("02.01.2006 15:04:05")
+			},
 		}).
 		ParseFiles("web/templates/index.html")
 	if err != nil {
@@ -138,13 +141,21 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 		</div>
 		`))
 	} else {
-		tmpl = template.Must(template.New("news").Parse(`
-                {{ range . }}
-                <div class="feed-item">
+		tmpl = template.Must(template.New("news").
+			Funcs(template.FuncMap{
+				"truncate": func(html template.HTML, length int) string {
+					return string(utils.TruncateDescription(html, length))
+				},
+				"formatDate": func(t time.Time) string {
+					return t.Format("02.01.2006 15:04:05")
+				},
+			}).Parse(`
+                {{ range .NewsItems }}
+                    <div class="feed-item">
                     <div class="feed-info">
                         <h3>{{.Title}}</h3>
-                        <p>{{.Description}}</p>
-                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{.PubDate}}</span>
+                        <p>{{ truncate .Description 150 }}</p>
+                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{ formatDate .PubDate }}</span>
                     </div>
                 </div>
                 {{ end }}
@@ -183,13 +194,21 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	log.Printf("TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
 		timeFilter, sortFilter, len(newsItems), len(filterItems))
 
-	tmpl := template.Must(template.New("news").Parse(`
+	tmpl := template.Must(template.New("news").
+		Funcs(template.FuncMap{
+			"truncate": func(html template.HTML, length int) string {
+				return string(utils.TruncateDescription(html, length))
+			},
+			"formatDate": func(t time.Time) string {
+				return t.Format("02.01.2006 15:04:05")
+			},
+		}).Parse(`
         {{ range .newsItems }}
         <div class="feed-item">
             <div class="feed-info">
                 <h3>{{.Title}}</h3>
-                <p>{{.Description}}</p>
-                <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{.PubDate}}</span>
+                <p>{{ truncate .Description 150 }}</p>
+                <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{formatDate .PubDate}}</span>
             </div>
         </div>
         {{ end }}

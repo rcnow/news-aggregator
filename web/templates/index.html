@@ -146,7 +146,7 @@
                     <div class="feed-info">
                         <h3>{{.Title}}</h3>
                         <p>{{ truncate .Description 150 }}</p>
-                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{.PubDate}}</span>
+                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{ formatDate .PubDate }}</span>
                     </div>
                 </div>
                 {{ end }}
