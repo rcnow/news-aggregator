@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -21,8 +22,24 @@ var (
 	timeFilter  time.Duration
 	sortFilter  string
 	mu          sync.Mutex
+	sseClients  map[chan string]bool
 )
 
+func init() {
+	sseClients = make(map[chan string]bool)
+}
+
+func broadcastUpdate() {
+	mu.Lock()
+	defer mu.Unlock()
+
+	for client := range sseClients {
+		select {
+		case client <- "update":
+		default:
+		}
+	}
+}
 func UpdateNews() {
 	for {
 		feeds := []string{
@@ -33,7 +50,7 @@ func UpdateNews() {
 			"https://www.reddit.com/r/birding.rss",
 			//"https://feeds.bbci.co.uk/news/world/rss.xml",
 		}
-
+		log.Printf("UpdateNews before -- TimeFilter: %v, SortFilter: %s", timeFilter, sortFilter)
 		var newItems []models.NewsItem
 		for _, feed := range feeds {
 			news := fetcher.FetchNews(feed)
@@ -42,15 +59,18 @@ func UpdateNews() {
 
 		mu.Lock()
 		newsItems = newItems
-
-		timeFilter = 24 * time.Hour
-		sortFilter = "desc"
-
-		filterItems = newsItems
-		filterItems = utils.FilterNewsByTime(filterItems, timeFilter, sortFilter)
+		if timeFilter == 0 {
+			timeFilter = 24 * time.Hour
+		}
+		if sortFilter == "" {
+			sortFilter = "desc"
+		}
+		log.Printf("UpdateNews after -- TimeFilter: %v, SortFilter: %s", timeFilter, sortFilter)
+		filterItems = utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
 		filterItems = utils.SortNewsByDate(filterItems, timeFilter, sortFilter)
-
 		mu.Unlock()
+
+		broadcastUpdate()
 
 		time.Sleep(30 * time.Minute)
 	}
@@ -121,7 +141,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
+func HandleFilterNews(w http.ResponseWriter, r *http.Request) {
 	query := r.FormValue("query")
 
 	mu.Lock()
@@ -250,4 +270,102 @@ func HandleAddFeedForm(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error rendering add feed form:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
+}
+
+func HandleSSE(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "SSE not supported", http.StatusInternalServerError)
+		return
+	}
+
+	lastEventID := r.Header.Get("Last-Event-ID")
+	log.Printf("Last-Event-ID: %s", lastEventID)
+	messageChan := make(chan string)
+
+	mu.Lock()
+	sseClients[messageChan] = true
+	mu.Unlock()
+
+	defer func() {
+		mu.Lock()
+		delete(sseClients, messageChan)
+		close(messageChan)
+		mu.Unlock()
+	}()
+
+	fmt.Fprintf(w, "event: init\ndata: connected\n\n")
+	flusher.Flush()
+
+	ticker := time.NewTicker(15 * time.Second)
+	defer ticker.Stop()
+
+	var eventID int64 = time.Now().UnixNano()
+	for {
+		select {
+		case msg := <-messageChan:
+			eventID++
+			fmt.Fprintf(w, "id: %d\nevent: update\ndata: %s\n\n", eventID, msg)
+
+			flusher.Flush()
+		case <-ticker.C:
+			fmt.Fprintf(w, "id: %d\nevent: ping\ndata: keep-alive\n\n", eventID)
+			flusher.Flush()
+		case <-r.Context().Done():
+			return
+		}
+	}
+}
+
+func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if timeFilter == 0 {
+		timeFilter = 24 * time.Hour
+	}
+	if sortFilter == "" {
+		sortFilter = "desc"
+	}
+
+	tmpl := template.Must(template.New("news").Funcs(template.FuncMap{
+		"truncate": func(html template.HTML, length int) string {
+			return string(utils.TruncateDescription(html, length))
+		},
+		"formatDate": func(t time.Time) string {
+			return t.Format("02.01.2006 15:04:05")
+		},
+	}).Parse(`
+        {{ range . }}
+        <div class="feed-item">
+            <div class="feed-info">
+                <h3>{{.Title}}</h3>
+                <p>{{ truncate .Description 150 }}</p>
+                <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{ formatDate .PubDate }}</span>
+            </div>
+        </div>
+        {{ end }}
+    `))
+
+	var feedViewHTML bytes.Buffer
+	err := tmpl.Execute(&feedViewHTML, filterItems)
+	if err != nil {
+		log.Println("Error rendering news template:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	response := map[string]interface{}{
+		"feedViewHTML":    feedViewHTML.String(),
+		"totalCount":      len(filterItems),
+		"timeFilterValue": int(timeFilter.Hours()),
+		"sortFilter":      sortFilter,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }
