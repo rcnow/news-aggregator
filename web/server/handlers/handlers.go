@@ -331,7 +331,7 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 	if sortFilter == "" {
 		sortFilter = "desc"
 	}
-
+	loading := len(filterItems) == 0
 	tmpl := template.Must(template.New("news").Funcs(template.FuncMap{
 		"truncate": func(html template.HTML, length int) string {
 			return string(utils.TruncateDescription(html, length))
@@ -340,7 +340,12 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 			return t.Format("02.01.2006 15:04:05")
 		},
 	}).Parse(`
-        {{ range . }}
+        {{ if .loading }}
+        <div id="loading" class="loading">
+            <h3>Loading...</h3>
+        </div>
+        {{ else }}
+        {{ range .newsItems }}
         <div class="feed-item">
             <div class="feed-info">
                 <h3>{{.Title}}</h3>
@@ -349,10 +354,14 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
             </div>
         </div>
         {{ end }}
+        {{ end }}
     `))
 
 	var feedViewHTML bytes.Buffer
-	err := tmpl.Execute(&feedViewHTML, filterItems)
+	err := tmpl.Execute(&feedViewHTML, map[string]interface{}{
+		"newsItems": filterItems,
+		"loading":   loading,
+	})
 	if err != nil {
 		log.Println("Error rendering news template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
