@@ -65,9 +65,10 @@ func UpdateNews() {
 		if sortFilter == "" {
 			sortFilter = "desc"
 		}
+		newsItems = utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
+		newsItems = utils.SortNewsByDate(newsItems, timeFilter, sortFilter)
 		log.Printf("UpdateNews after -- TimeFilter: %v, SortFilter: %s", timeFilter, sortFilter)
-		filterItems = utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
-		filterItems = utils.SortNewsByDate(filterItems, timeFilter, sortFilter)
+		filterItems = newsItems
 		mu.Unlock()
 
 		broadcastUpdate()
