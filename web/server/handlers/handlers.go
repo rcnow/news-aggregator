@@ -41,6 +41,12 @@ func broadcastUpdate() {
 	}
 }
 func UpdateNews() {
+	if timeFilter == 0 {
+		timeFilter = 24 * time.Hour
+	}
+	if sortFilter == "" {
+		sortFilter = "desc"
+	}
 	for {
 		feeds := []string{
 			"https://cointelegraph.com/rss",
@@ -50,28 +56,18 @@ func UpdateNews() {
 			"https://www.reddit.com/r/birding.rss",
 			//"https://feeds.bbci.co.uk/news/world/rss.xml",
 		}
-		log.Printf("UpdateNews before -- TimeFilter: %v, SortFilter: %s", timeFilter, sortFilter)
-		var newItems []models.NewsItem
 		for _, feed := range feeds {
 			news := fetcher.FetchNews(feed)
-			newItems = append(newItems, news...)
-		}
+			mu.Lock()
+			newsItems = append(newsItems, news...)
+			newsItems = utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
+			newsItems = utils.SortNewsByDate(newsItems, timeFilter, sortFilter)
+			filterItems = newsItems
+			mu.Unlock()
 
-		mu.Lock()
-		newsItems = newItems
-		if timeFilter == 0 {
-			timeFilter = 24 * time.Hour
+			broadcastUpdate()
+			time.Sleep(1 * time.Second)
 		}
-		if sortFilter == "" {
-			sortFilter = "desc"
-		}
-		newsItems = utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
-		newsItems = utils.SortNewsByDate(newsItems, timeFilter, sortFilter)
-		log.Printf("UpdateNews after -- TimeFilter: %v, SortFilter: %s", timeFilter, sortFilter)
-		filterItems = newsItems
-		mu.Unlock()
-
-		broadcastUpdate()
 
 		time.Sleep(30 * time.Minute)
 	}
