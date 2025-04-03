@@ -53,7 +53,7 @@
                 <p>{{.todayDate}}</p>
             </div>
             <nav class="feed-menu">
-                <a href="#">
+                <a href="#" id="allNewsLoading">
                     <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0 1.5H24" stroke="black" stroke-width="3"/>
                         <path d="M0 12H17" stroke="black" stroke-width="3"/>
@@ -75,9 +75,8 @@
             </nav>
             <nav class="channel-menu">
                 {{ range .uniqueItems }}
-                <a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a>
+                <a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}} <span class=count>{{index $.uniqueCounts .ChannelLink}}</span></a>
                 {{ end }}
-            </nav>
             </nav>
         </section>
         <!-- Feeder -->
@@ -146,7 +145,7 @@
                     <div class="feed-info">
                         <h3>{{.Title}}</h3>
                         <p>{{ truncate .Description 150 }}</p>
-                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> · {{ formatDate .PubDate }}</span>
+                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> &#8226 {{ formatDate .PubDate }}</span>
                     </div>
                 </div>
                 {{ end }}

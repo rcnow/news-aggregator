@@ -80,6 +80,21 @@ func SortNewsByDate(filteredItems []models.NewsItem, timeFilter time.Duration, s
 	return filteredItems
 }
 
+func FilterNewsByLink(filteredItems []models.NewsItem, link string) []models.NewsItem {
+	if link == "" {
+		return filteredItems
+	}
+
+	filtered := make([]models.NewsItem, 0, len(filteredItems))
+	for _, item := range filteredItems {
+		if item.ChannelLink == link {
+			filtered = append(filtered, item)
+		}
+	}
+
+	return filtered
+}
+
 func TruncateDescription(description template.HTML, maxLen int) template.HTML {
 	descStr := string(description)
 	if len(descStr) <= maxLen {
@@ -93,4 +108,27 @@ func TruncateDescription(description template.HTML, maxLen int) template.HTML {
 	}
 
 	return template.HTML(strings.TrimSpace(truncated) + " …")
+}
+
+func GetUniqueItems(items []models.NewsItem) ([]models.NewsItem, map[string]int) {
+	uniqueLinks := make(map[string]models.NewsItem)
+	uniqueCounts := make(map[string]int)
+
+	for _, item := range items {
+		if _, exists := uniqueLinks[item.ChannelLink]; !exists {
+			uniqueLinks[item.ChannelLink] = item
+		}
+		uniqueCounts[item.ChannelLink]++
+	}
+
+	uniqueItems := make([]models.NewsItem, 0, len(uniqueLinks))
+	for link := range uniqueLinks {
+		uniqueItems = append(uniqueItems, uniqueLinks[link])
+	}
+
+	sort.Slice(uniqueItems, func(i, j int) bool {
+		return uniqueCounts[uniqueItems[i].ChannelLink] > uniqueCounts[uniqueItems[j].ChannelLink]
+	})
+
+	return uniqueItems, uniqueCounts
 }

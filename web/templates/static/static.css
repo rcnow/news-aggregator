@@ -169,6 +169,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: 10px;
+    gap: 10px;
 }
 
 .feed-menu a {
@@ -182,7 +183,7 @@ body {
 }
 
 .feed-menu a:hover {
-    background-color: orange;
+    background-color: #ffa500;
 }
 
 .channel-menu {
@@ -191,15 +192,31 @@ body {
     padding: 10px;
     border-top: 1px solid #cbcbcb;
 }
+
 .channel-menu  a {
     display: flex;
     padding: 10px;
     text-decoration: none;
     color: #555;
-    border-radius: 5px;
-    transition: background-color 0.5s ease;
     align-items: center;
 }
+
+.channel-menu  a:hover {
+    display: flex;
+    padding: 10px;
+    text-decoration: none;
+    color: #c91a1a;
+    align-items: center;
+}
+
+.favicon img, .favicon svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .feeder {
     flex: 1;
     display: flex;
@@ -375,10 +392,11 @@ body {
 }
 
 .count {
-    background: aquamarine;
+    background: #ffffff;
     border-radius: 5px;
     padding: 5px 10px;
     margin-left: auto;
+    font-weight: 500;
 }
 
 .filter-popup {

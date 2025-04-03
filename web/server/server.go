@@ -12,11 +12,12 @@ func StartWebServer() {
 
 	handlers.HandleStaticFiles()
 	http.HandleFunc("/", handlers.HandleIndex)
-	http.HandleFunc("/filter-news", handlers.HandleFilterNews)
-	http.HandleFunc("/add-feed", handlers.HandleAddFeedForm)
-	http.HandleFunc("/sort-news", handlers.HandleSortNews)
 	http.HandleFunc("/sse", handlers.HandleSSE)
 	http.HandleFunc("/load-news", handlers.HandleLoadNews)
+	http.HandleFunc("/add-feed", handlers.HandleAddFeedForm)
+	http.HandleFunc("/filter-by-search", handlers.HandleFilterNewsBySearch)
+	http.HandleFunc("/filter-by-link", handlers.HandleFilterNewsByLink)
+	http.HandleFunc("/sort-news", handlers.HandleSortNews)
 
 	log.Println("Server is running on http://localhost:8080")
 	log.Println("Debug pprof available at http://localhost:8080/debug/pprof/")
