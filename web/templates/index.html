@@ -2,165 +2,148 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="static/img/favicon.png" sizes="32x32">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/static.css">
+    <link rel="stylesheet" href="static/main.css">
     <title>News Aggregator</title>
 </head>
 <body>
-    <section class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-logo"><h3>News Aggregator</h3></div>
-            <nav class="sidebar-menu">
-                <a href="#" class="active">
-                    <svg  class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M4 12V24" stroke="black" stroke-width="7"/>
-                        <path d="M20 12V24" stroke="black" stroke-width="7"/>
-                        <path d="M7 23L17 23" stroke="black" stroke-width="2"/>
-                        <path d="M11 0H13L24 12.5H0L11 0Z" fill="black"/>
-                        <path d="M21 3V12" stroke="black" stroke-width="3"/>
-                    </svg>
-                    Main
-                </a>
-                <a href="#">
-                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14.5173 4.01731L13.9142 3.41421C13.649 3.149 13.5 2.78929 13.5 2.41421C13.5 1.63317 12.8668 1 12.0858 1H9.56155C8.64382 1 7.84385 1.62459 7.62127 2.51493L7.58402 2.66392C7.52842 2.88632 7.435 3.0975 7.30784 3.28824L6.90791 3.88813C6.65307 4.27039 6.22405 4.5 5.76462 4.5C5.58981 4.5 5.41661 4.46664 5.25431 4.40172L4.50672 4.10269C3.62859 3.75144 2.62446 4.06331 2.09984 4.85024L1.05023 6.42466C0.478465 7.2823 0.739643 8.44379 1.62351 8.97411C2.16728 9.30037 2.5 9.88801 2.5 10.5222V11.7984C2.5 12.2526 2.34544 12.6932 2.06174 13.0478L1.4679 13.7901C0.898121 14.5023 0.882383 15.5098 1.42964 16.2395L2.60337 17.8045C3.12259 18.4968 4.06261 18.7187 4.83662 18.3317C5.26137 18.1193 5.7531 18.0844 6.20363 18.2345L6.349 18.283C6.77093 18.4236 7.13394 18.7009 7.38064 19.071L7.74217 19.6132C7.91029 19.8654 8 20.1617 8 20.4648C8 21.3127 8.68733 22 9.53518 22H12.1972C12.9167 22 13.5 21.4167 13.5 20.6972C13.5 20.2616 13.7177 19.8549 14.0801 19.6132L15 19L15.3862 18.8069C15.784 18.608 16.2368 18.5474 16.6729 18.6346L17.264 18.7528C18.0193 18.9039 18.7941 18.6078 19.2563 17.9916L20.6 16.2C21.1333 15.4889 21.1351 14.5098 20.5877 13.8095C20.4054 13.5763 20.2166 13.3382 20.0427 13.1251C19.7073 12.7142 19.5 12.202 19.5 11.6716V10.3645C19.5 9.82027 19.9634 9.15242 20.3988 8.8259C21.1329 8.27534 21.1018 7.40264 20.5928 6.63915L19.4002 4.85024C18.8755 4.06331 17.8714 3.75144 16.9933 4.10269L16.2947 4.38213C16.1 4.45999 15.8923 4.5 15.6826 4.5C15.2455 4.5 14.8264 4.32637 14.5173 4.01731Z" fill="black" stroke="black"/>
-                        <circle cx="11" cy="11.5" r="4.5" fill="white"/>
-                    </svg>
-                    Setting
-                </a>
-            </nav>
-            <footer class="sidebar-footer">
-                <a href="#" id="addFeedButton">
-                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="11.5" stroke="black"/>
-                        <path d="M3 12H21" stroke="black" stroke-width="2"/>
-                        <path d="M12 21L12 3" stroke="black" stroke-width="2"/>
-                    </svg>
-                    Add</a>
-                <a href="#">
-                    <svg class="icon-q" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 7.8799C5 5.14387 7.11752 3.77585 7.11752 3.77585C7.6469 2.79807 13.1456 2.86383 15.1607 3.31984C17.1757 3.77585 17.7051 5.59986 17.8076 6.05586C17.91 6.51187 18.2345 7.87988 17.7051 9.2479C17.1757 10.6159 16.3219 10.4844 15.1607 11.0062C13.9995 11.5279 12.0869 12.3084 11.9844 13.2862C11.8819 14.264 11.8819 17 11.8819 17" stroke="black" stroke-width="3"/>
-                        <circle cx="12" cy="22" r="2" fill="#0B0B0B"/>
-                    </svg>
-                    Help</a>
-            </footer>
+    <section class="panel left-panel">
+        <div class="panel-logo">
+            <svg xmlns="http://www.w3.org/2000/svg"  class="icon" fill="none" viewBox="0 0 32 24">
+                <path fill="#currentColor" d="M19.441.624C21.578.017 24.337-.302 26.662.4l.157.054C27.584.761 28 1.513 28 2.247V3h4v21H0V3h4v-.753C4 1.513 4.416.761 5.18.454L5.339.4c2.325-.702 5.084-.383 7.22.224 1.08.307 2.056.703 2.793 1.124.231.133.45.277.649.428a5.94 5.94 0 0 1 .65-.428c.736-.421 1.712-.817 2.791-1.124ZM28 19.494c0 1.306-1.193 2.196-2.383 2.012l-.237-.05c-1.03-.288-2.381-.59-3.429-.59-.329 0-.85.127-1.509.396-.494.202-1.014.461-1.506.738H30V5h-2v14.494ZM2 5v17h11.065a13.775 13.775 0 0 0-1.507-.738c-.66-.269-1.18-.396-1.51-.396-1.047 0-2.398.302-3.428.59l-.237.05C5.193 21.69 4 20.8 4 19.494V5H2Zm10.012-2.452C10.088 2.001 7.798 1.775 6 2.29v17.207l.017.017a.085.085 0 0 0 .035.016l.031-.001c1.057-.295 2.63-.663 3.966-.663.723 0 1.534.247 2.264.544.752.308 1.522.712 2.193 1.114.151.09.3.182.442.273l.01-1.524c.01-1.613.024-3.777.032-5.98.009-2.205.014-4.448.007-6.218-.006-1.6-.023-2.746-.045-3.17l-.017-.016a3.062 3.062 0 0 0-.578-.404c-.563-.323-1.38-.663-2.345-.937ZM26 2.29c-1.798-.515-4.088-.289-6.012.258-.965.274-1.782.614-2.345.937a3.062 3.062 0 0 0-.579.404l-.016.017c-.022.423-.04 1.57-.045 3.169-.006 1.77-.002 4.013.007 6.217.008 2.204.021 4.368.032 5.98l.01 1.525c.143-.091.29-.183.442-.273.671-.402 1.44-.806 2.194-1.114.729-.297 1.54-.544 2.263-.544 1.336 0 2.909.368 3.966.663h.031a.084.084 0 0 0 .035-.015l.017-.017V2.29Z"/>
+            </svg>
+            <h3>News Aggregator</h3>
         </div>
-        <!-- Feed List -->
-        <section class="feed-list">
-            <div class="header">
-                <h3>Today</h3>
-                <p>{{.todayDate}}</p>
+        <nav class="menu-header">
+            <a href="#" id="home-link" class="active">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" fill-rule="evenodd" d="M24 9.6 12 0 6.75 4.2 0 9.6h1.333V24h8v-7.2h5.334V24h8V9.6H24Z" clip-rule="evenodd"/>
+                </svg>
+                <p>Home</p>
+            </a>
+            <a href="#" id="setting-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" fill-rule="evenodd" d="M15 2v2.014c0 .32.2.603.492.734.308.14.673.087.912-.152l.582-.582L17 4l.586-.586a2 2 0 0 1 2.828 0l.707.707a2 2 0 0 1 0 2.829l-1.039 1.039c-.33.33-.402.833-.224 1.266.18.433.588.745 1.058.745H22a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-1.084c-.47 0-.878.312-1.058.745-.178.433-.107.935.224 1.266l1.01 1.01a2 2 0 0 1 0 2.828l-.707.707a2 2 0 0 1-2.829 0L17 21l-.014-.014-.582-.582a.813.813 0 0 0-.912-.152.816.816 0 0 0-.492.734V22a2 2 0 0 1-2 2h-1.19c-1 0-1.81-.81-1.81-1.81v-.345c0-.634-.446-1.177-1.039-1.404-.562-.215-1.206-.125-1.632.3l-.35.35a2 2 0 0 1-2.828 0l-.707-.706a2 2 0 0 1 0-2.829l.478-.478c.342-.343.415-.863.229-1.31C3.965 15.32 3.544 15 3.06 15H2a2 2 0 0 1-2-2v-1a2 2 0 0 1 2-2h1.06c.484 0 .905-.321 1.09-.767.187-.448.114-.969-.228-1.311l-.508-.508a2 2 0 0 1 0-2.828l.707-.707a2 2 0 0 1 2.829 0l.38.38c.425.425 1.07.516 1.631.3C9.554 4.332 10 3.79 10 3.155V2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2Zm-3 0h1v2.014c0 1.18.731 2.134 1.67 2.557.998.45 2.27.318 3.148-.56L19 4.827l.707.708-1.039 1.038c-.971.972-1.107 2.36-.658 3.445.444 1.073 1.516 1.981 2.906 1.981H22v1h-1.084c-1.39 0-2.462.908-2.906 1.981-.449 1.086-.313 2.473.658 3.444l1.01 1.01-.707.707-1.153-1.152c-.878-.879-2.15-1.011-3.149-.561-.938.423-1.669 1.377-1.669 2.557V22h-1v-.154c0-1.616-1.11-2.808-2.323-3.273-1.18-.451-2.692-.315-3.762.755l-.35.35-.707-.707.478-.479c.987-.987 1.118-2.396.66-3.494C5.547 13.918 4.466 13 3.062 13H2v-1h1.06c1.405 0 2.487-.918 2.937-1.998.457-1.098.326-2.507-.66-3.494L4.827 6l.708-.707.379.38c1.07 1.07 2.583 1.205 3.762.754C10.89 5.962 12 4.77 12 3.155V2Zm2.5 10.25a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm2 0a4.25 4.25 0 1 1-8.5 0 4.25 4.25 0 0 1 8.5 0Z" clip-rule="evenodd"/>
+                </svg>
+                <p>Settings</p>
+            </a>
+            <a href="#" id="add-feed-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" fill-rule="evenodd" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10Zm0 2c6.627 0 12-5.373 12-12S18.627 0 12 0 0 5.373 0 12s5.373 12 12 12ZM5.063 13H5v-2h6V5h2V11H19v2H13V19h-2V13H5.063Z" clip-rule="evenodd"/>
+                </svg>
+                <p>Add new</p>
+            </a>
+            <a href="#" id="help-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M12 0c6.627 0 12 5.373 12 12s-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0Zm0 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2Zm1.5 17.5h-3v-3h3v3ZM15 5a2.5 2.5 0 0 1 2.5 2.5v2.73a2.5 2.5 0 0 1-1.973 2.444l-2.027.436v2.39h-3v-2.793a2.5 2.5 0 0 1 1.973-2.443l2.027-.438V8H7V5h8Z"/>
+                </svg>
+                <p>Help</p>
+            </a>
+            <div class="theme-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" fill-rule="evenodd" d="M13 1a1 1 0 1 0-2 0v2.06c0 .532.468.94 1 .94s1-.408 1-.94V1ZM6.385 4.971c.377.377.335.996-.042 1.372-.376.377-.995.419-1.372.042L3.515 4.93a1 1 0 1 1 1.414-1.414L6.385 4.97ZM3.06 11c.533 0 .941.468.941 1s-.408 1-.94 1H1a1 1 0 1 1 0-2h2.06Zm1.912 6.615c.377-.377.996-.335 1.372.042.377.376.419.995.042 1.372L4.93 20.485a1 1 0 0 1-1.414-1.414l1.456-1.456ZM11 20.94c0-.533.468-.941 1-.941s1 .408 1 .94V23a1 1 0 1 1-2 0v-2.06Zm6.615-1.912c-.377-.377-.335-.996.042-1.372.376-.377.995-.419 1.372-.042l1.456 1.456a1 1 0 0 1-1.414 1.414l-1.456-1.456ZM20.94 13c-.533 0-.941-.468-.941-1s.408-1 .94-1H23a1 1 0 1 1 0 2h-2.06Zm-1.912-6.615c-.377.377-.996.335-1.372-.042-.377-.376-.419-.995-.042-1.372l1.456-1.456a1 1 0 1 1 1.414 1.414L19.03 6.385ZM17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Zm2 0a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" clip-rule="evenodd"/>
+                </svg>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" fill-rule="evenodd" d="M17 1.84c0-.758-.498-1.435-1.24-1.58C14.882.09 13.974 0 13.043 0 5.84 0 0 5.373 0 12s5.84 12 13.044 12c.931 0 1.84-.09 2.715-.26.743-.145 1.241-.822 1.241-1.58 0-.68-.411-1.285-1.006-1.615-3.215-1.782-5.298-5.003-5.298-8.545s2.083-6.763 5.298-8.545C16.589 3.125 17 2.52 17 1.839ZM13.044 22c.45 0 .6-.58.245-.858-2.81-2.202-4.593-5.48-4.593-9.142 0-3.662 1.783-6.94 4.593-9.141.355-.278.205-.859-.245-.859C6.784 2 2 6.631 2 12s4.784 10 11.044 10Z" clip-rule="evenodd"/>
+                </svg>
             </div>
-            <nav class="feed-menu">
-                <a href="#" id="allNewsLoading">
-                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0 1.5H24" stroke="black" stroke-width="3"/>
-                        <path d="M0 12H17" stroke="black" stroke-width="3"/>
-                        <path d="M0 22.5H24" stroke="black" stroke-width="3"/>
-                    </svg>
-                    All news <span class="count">{{.totalCount}}</span></a>
-                <a href="#">
-                    <svg class="icon-nofill " width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="8" r="3.5" fill="black" stroke="black"/>
-                        <path d="M1 8C8.15 -1.81777 16.4 -0.835995 23 8" stroke="black" stroke-width="2" stroke-linecap="round"/>
-                        <path d="M1 8C8.15 17.8178 16.4 16.836 23 8" stroke="black" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                Not reading</a>
-                <a href="#">
-                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M11.0719 1.91415C11.4076 1.07714 12.5924 1.07714 12.9281 1.91415L15.3409 7.93004C15.4818 8.28135 15.809 8.52299 16.1862 8.55436L22.5123 9.0803C23.3887 9.15317 23.7511 10.2404 23.0936 10.8245L18.221 15.153C17.9477 15.3958 17.8286 15.7684 17.9106 16.1247L19.3898 22.5557C19.5901 23.4264 18.635 24.1027 17.8802 23.6246L12.5351 20.2389C12.2084 20.032 11.7916 20.032 11.4649 20.2389L6.11983 23.6246C5.36504 24.1027 4.40989 23.4264 4.61017 22.5557L6.0894 16.1247C6.17136 15.7684 6.05232 15.3958 5.77898 15.153L0.906388 10.8245C0.248908 10.2404 0.611255 9.15317 1.48767 9.0803L7.8138 8.55436C8.19101 8.52299 8.51818 8.28135 8.65908 7.93004L11.0719 1.91415Z" fill="black"/>
-                    </svg>
-                    Favorites</a>
-            </nav>
-            <nav class="channel-menu">
-                {{ range .uniqueItems }}
-                <a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}} <span class=count>{{index $.uniqueCounts .ChannelLink}}</span></a>
-                {{ end }}
-            </nav>
+        </nav>
+        <nav class="link-list">
+            <a href="#" id="show-all-news">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" fill-rule="evenodd" d="M24 0H0v3h24V0Zm-6 7H0v3h18V7ZM0 14h18v3H0v-3Zm24 7H0v3h24v-3Z" clip-rule="evenodd"/>
+                </svg>
+                <p>All news</p>
+                <span class="count">{{.totalCount}}</span>
+            </a>
+        </nav>
+        <nav class="unique-link-list">
+            {{ range .uniqueItems }}
+            <a href="{{.ChannelLink}}" target="_blank">
+                <p>{{.ChannelTitle}}</p>
+                <span class=count>{{index $.uniqueCounts .ChannelLink}}</span>
+            </a>
+            {{ end }}
+        </nav>
+        <footer class="panel-footer">
+            <p>{{.todayDate}}</p>
+        </footer>
+    </section>
+    <section class="panel middle-panel">
+        <h3 class="panel-header">{{.channelTitle}}</h3>
+        <div class="panel-search">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                <path fill="currentColor" fill-rule="evenodd" d="M13 7.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0Zm-1 6a7.5 7.5 0 1 1 1.426-1.403l10.095 10.095a1 1 0 0 1-1.414 1.415L12 13.5Z" clip-rule="evenodd"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search news...">
+        </div>
+        <nav class="menu-header">
+            <a href="#" id="sort-time">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
+                    <path fill="currentColor" fill-rule="evenodd" d="M24 0H0v3h24V0Zm-4 21H4v3h16v-3ZM3 14h18v3H3v-3Zm19-7H2v3h20V7Z" clip-rule="evenodd"/>
+                </svg>
+                <p>Filter</p>
+                <div class="filter-popup">
+                    <p>Show news for ...</p>
+                    <label class="radio-item">
+                        <input type="radio" name="filter" value="24" {{if eq .timeFilterValue 24}}checked{{end}}>
+                        <span class="radio-label">24 hours</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="filter" value="12" {{if eq .timeFilterValue 12}}checked{{end}}>
+                        <span class="radio-label">12 hours</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="filter" value="6"{{if eq .timeFilterValue 6}}checked{{end}}>
+                        <span class="radio-label">6 hours</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="filter" value="3"{{if eq .timeFilterValue 6}}checked{{end}}>
+                        <span class="radio-label">3 hours</span>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="filter" value="1"{{if eq .timeFilterValue 1}}checked{{end}}>
+                        <span class="radio-label">1 hour</span>
+                    </label>
+                </div>
+            </a>
+            <a href="#" id="sort-asc-desc" data-sort="{{.sortFilter}}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" id="sort-icon">
+                    {{ if eq .sortFilter "desc" }}
+                    <path fill="currentColor" fill-rule="evenodd" d="M9 1a1 1 0 0 1 2 0v19.996l7.19-7.19a.854.854 0 0 1 1.206 1.208L10.76 23.65a.998.998 0 0 1-1.464.06L.604 15.018A.854.854 0 1 1 1.81 13.81L9 21V1Z" clip-rule="evenodd"/>
+                    {{ else }}
+                    <path fill="currentColor" fill-rule="evenodd" d="M11.354 23a1 1 0 0 1-2 0V3.004l-7.19 7.19A.854.854 0 0 1 .957 8.986L9.594.35a.998.998 0 0 1 1.464-.06l8.692 8.692a.854.854 0 0 1-1.207 1.207L11.353 3v20Z" clip-rule="evenodd"/>
+                    {{ end}}
+                </svg>
+                <p>Sort</p>
+            </a>
+        </div>
+        </nav>
+        <section class="feed-view">
+            {{ if .loading }}
+            <div id="loading" class="loading">
+                <h3>Loading...</h3>
+            </div>
+            {{ else }}
+            {{ range .newsItems }}
+            <div class="feed-item">
+                <h3 class="feed-title">{{.Title}}</h3>
+                <p class="feed-description">{{ truncate .Description 150 }}</p>
+                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+             </div>
+            {{ end }}
+            {{ end }}
         </section>
-        <!-- Feeder -->
-        <section class="feeder">
-            <div class="header">
-                <div class="header-bar">
-                    <h3>All news</h3>
-                    <div class="search-bar">
-                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="7.5" cy="7.5" r="6.5" stroke="black" stroke-width="2"/>
-                            <path d="M19.7536 20.7536L12 13" stroke="black" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        <input type="text" id="searchInput"  placeholder="Search...">
-                    </div>
-                </div>
-                <div class="header-menu">
-                    <div class="element">
-                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 23H4" stroke="black" stroke-width="3"/>
-                            <path d="M24 1H0" stroke="black" stroke-width="3"/>
-                            <path d="M22 12H2" stroke="black" stroke-width="3"/>
-                        </svg>
-                        <p>Filter</p>
-                        <div class="filter-popup">
-                            <p>Show news for ...</p>
-                            <label class="radio-item">
-                                <input type="radio" name="filter" value="24" {{if eq .timeFilterValue 24}}checked{{end}}>
-                                <span class="radio-label">24 hours</span>
-                            </label>
-                            <label class="radio-item">
-                                <input type="radio" name="filter" value="12" {{if eq .timeFilterValue 12}}checked{{end}}>
-                                <span class="radio-label">12 hours</span>
-                            </label>
-                            <label class="radio-item">
-                                <input type="radio" name="filter" value="6"{{if eq .timeFilterValue 6}}checked{{end}}>
-                                <span class="radio-label">6 hours</span>
-                            </label>
-                            <label class="radio-item">
-                                <input type="radio" name="filter" value="1"{{if eq .timeFilterValue 1}}checked{{end}}>
-                                <span class="radio-label">1 hour</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="element" id="sort-feed" data-sort="{{.sortFilter}}">
-                        <svg class="icon-nofill" id="sort-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            {{ if eq .sortFilter "desc" }}
-                            <path d="M9 20C9 10.8571 9 2.85714 9 0" stroke="black" stroke-width="3"/>
-                            <path d="M2 11.45L9.04286 21.45L16.5 11.45" stroke="black" stroke-width="3"/>
-                            {{ else }}
-                            <path d="M9 24C9 14.8571 9 6.85714 9 4" stroke="black" stroke-width="3"/>
-                            <path d="M2 12.45L9.04286 2.45L16.5 12.45" stroke="black" stroke-width="3"/>
-                            {{ end}}
-                        </svg>
-                        <p>Sort</p>
-                    </div>
-                </div>
-            </div>
-            <section class="feed-view">
-                {{ if .loading }}
-                <div id="loading" class="loading">
-                    <h3>Loading...</h3>
-                </div>
-                {{ else }}
-                {{ range .newsItems }}
-                <div class="feed-item">
-                    <div class="feed-info">
-                        <h3>{{.Title}}</h3>
-                        <p>{{ truncate .Description 150 }}</p>
-                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> &#8226 {{ formatDate .PubDate }}</span>
-                    </div>
-                </div>
-                {{ end }}
-                {{ end }}
-            </section>
-        </section>
-        <!-- Main View -->
-        <article class="main-view">
-            <h2>News Title</h2>
-            <div class="main-info">
-                <p>ChannelTitle</p>
-                <p>news news news news news </p>
-                <a href="#" class="button">Read more</a>
-            </div>
-        </article>
+    </section>
+    <section class="panel-main right-panel">
+        <h2 class="main-title">Home</h2>
+        <p class="main-description">news news news news news </p>
+        <a href="#" class="main-button">Read more</a>
     </section>
     <script src="/static/main.js" defer></script>
 </body>

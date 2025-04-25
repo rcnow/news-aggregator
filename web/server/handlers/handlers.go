@@ -17,12 +17,13 @@ import (
 )
 
 var (
-	newsItems   []models.NewsItem
-	filterItems []models.NewsItem
-	timeFilter  time.Duration
-	sortFilter  string
-	mu          sync.Mutex
-	sseClients  map[chan string]bool
+	newsItems    []models.NewsItem
+	filterItems  []models.NewsItem
+	timeFilter   time.Duration
+	sortFilter   string
+	channelTitle string
+	mu           sync.Mutex
+	sseClients   map[chan string]bool
 )
 
 func init() {
@@ -47,13 +48,15 @@ func UpdateNews() {
 	if sortFilter == "" {
 		sortFilter = "desc"
 	}
-
+	if channelTitle == "" {
+		channelTitle = fmt.Sprintf("All news for the last %d hours", int(timeFilter.Hours()))
+	}
 	feeds := []string{
 		"https://cointelegraph.com/rss",
 		"https://bitcoinmagazine.com/feed",
 		"https://feeds.bloomberg.com/markets/news.rss",
-		"https://ir.thomsonreuters.com/rss/news-releases.xml?items=15",
 		"https://www.reddit.com/r/birding.rss",
+		"https://habr.com/ru/rss/articles/top/daily/?fl=ru",
 	}
 
 	for {
@@ -65,10 +68,9 @@ func UpdateNews() {
 			mu.Lock()
 			newsItems = newItems
 			filterItems = utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
-			filterItems = utils.SortNewsByDate(filterItems, timeFilter, sortFilter)
+			filterItems = utils.SortByDirection(filterItems, timeFilter, sortFilter)
 			mu.Unlock()
 			broadcastUpdate()
-			log.Printf("Fetched %d items from %s\n", len(news), feed)
 			time.Sleep(1 * time.Second)
 		}
 		time.Sleep(30 * time.Minute)
@@ -100,8 +102,8 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	uniqueItems, uniqueСounts := utils.GetUniqueItems(filterItems)
-
+	uniqueItems := utils.GetUniqueItems(filterItems)
+	//log.Printf("HandleIndex - mainitems: items %d, Filtered: %d", len(newsItems), len(filterItems))
 	if len(filterItems) == 0 {
 		err = tmpl.Execute(w, map[string]any{
 			"newsItems":       []models.NewsItem{},
@@ -111,17 +113,20 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 			"loading":         true,
 			"timeFilterValue": timeFilter,
 			"sortFilter":      sortFilter,
+			"channelTitle":    channelTitle,
 		})
 	} else {
 		err = tmpl.Execute(w, map[string]any{
-			"newsItems":       filterItems,
-			"uniqueItems":     uniqueItems,
-			"uniqueCounts":    uniqueСounts,
-			"todayDate":       todayDate,
-			"totalCount":      len(filterItems),
-			"loading":         false,
-			"timeFilterValue": int(timeFilter.Hours()),
-			"sortFilter":      sortFilter,
+			"newsItems":         filterItems,
+			"uniqueItems":       uniqueItems.Items,
+			"uniqueCounts":      uniqueItems.Counts,
+			"uniqueFaviconURLs": uniqueItems.FaviconURLs,
+			"todayDate":         todayDate,
+			"totalCount":        len(filterItems),
+			"loading":           false,
+			"timeFilterValue":   int(timeFilter.Hours()),
+			"sortFilter":        sortFilter,
+			"channelTitle":      channelTitle,
 		})
 	}
 
@@ -142,7 +147,7 @@ func HandleFilterNewsBySearch(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	mu.Unlock()
-	uniqueItems, uniqueСounts := utils.GetUniqueItems(filteredItems)
+	uniqueItems := utils.GetUniqueItems(filteredItems)
 
 	var tmpl *template.Template
 	var err error
@@ -183,10 +188,11 @@ func HandleFilterNewsBySearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"feedViewHTML": feedViewHTML.String(),
-		"totalCount":   len(filteredItems),
-		"uniqueItems":  uniqueItems,
-		"uniqueCounts": uniqueСounts,
+		"feedViewHTML":      feedViewHTML.String(),
+		"totalCount":        len(filteredItems),
+		"uniqueItems":       uniqueItems.Items,
+		"uniqueCounts":      uniqueItems.Counts,
+		"uniqueFaviconURLs": uniqueItems.FaviconURLs,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -207,16 +213,17 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sortOrder := r.Header.Get("sortFilter")
+
 	if sortOrder == "asc" || sortOrder == "desc" {
 		sortFilter = sortOrder
 	}
 
 	filteredItems := utils.FilterNewsByTime(newsItems, timeFilter, sortFilter)
-	filteredItems = utils.SortNewsByDate(filteredItems, timeFilter, sortFilter)
+	filteredItems = utils.SortByDirection(filteredItems, timeFilter, sortFilter)
 	filterItems = filteredItems
-	uniqueItems, uniqueСounts := utils.GetUniqueItems(filterItems)
-	log.Printf("TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
-		timeFilter, sortFilter, len(newsItems), len(filterItems))
+	uniqueItems := utils.GetUniqueItems(filterItems)
+	//log.Printf("TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
+	//	timeFilter, sortFilter, len(newsItems), len(filterItems))
 
 	tmpl := template.Must(template.New("news").
 		Funcs(template.FuncMap{
@@ -227,15 +234,13 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 				return t.Format("02.01.2006 15:04:05")
 			},
 		}).Parse(`
-        {{ range .newsItems }}
-        <div class="feed-item">
-            <div class="feed-info">
-                <h3>{{.Title}}</h3>
-                <p>{{ truncate .Description 150 }}</p>
-                <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> &#8226 {{formatDate .PubDate}}</span>
-            </div>
-        </div>
-        {{ end }}
+            {{ range .newsItems }}
+            <div class="feed-item">
+                <h3 class="feed-title">{{.Title}}</h3>
+                <p class="feed-description">{{ truncate .Description 150 }}</p>
+                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+             </div>
+            {{ end }}
     `))
 
 	var feedViewHTML bytes.Buffer
@@ -249,20 +254,45 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"feedViewHTML":    feedViewHTML.String(),
-		"totalCount":      len(filterItems),
-		"timeFilterValue": int(timeFilter.Hours()),
-		"sortFilter":      sortFilter,
-		"uniqueItems":     uniqueItems,
-		"uniqueCounts":    uniqueСounts,
+		"feedViewHTML":      feedViewHTML.String(),
+		"totalCount":        len(filterItems),
+		"timeFilterValue":   int(timeFilter.Hours()),
+		"sortFilter":        sortFilter,
+		"uniqueItems":       uniqueItems.Items,
+		"uniqueCounts":      uniqueItems.Counts,
+		"uniqueFaviconURLs": uniqueItems.FaviconURLs,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
 
-func HandleAddFeedForm(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.New("add-feed-form").Parse(`
+func HandleHomeView(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.New("home-view").Parse(`
+     <h2 class="main-title">Home</h2>
+        <p class="main-description">news news news news news </p>
+        <a href="#" class="main-button">Read more</a>
+`))
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		log.Println("Error rendering add feed form:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+func HandleSettingView(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.New("setting-view").Parse(`
+     <h2 class="main-title">Setting</h2>
+        <p class="main-description">news news news news news </p>
+        <a href="#" class="main-button">Read more</a>
+`))
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		log.Println("Error rendering add feed form:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+func HandleAddFeedView(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.New("add-feed-view").Parse(`
 	            <h2>Add new feed </h2>
             <div class="main-info">
                 <p>add feed</p>
@@ -276,7 +306,18 @@ func HandleAddFeedForm(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
-
+func HandleHelpView(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.New("help-view").Parse(`
+     <h2 class="main-title">Help</h2>
+        <p class="main-description">news news news news news </p>
+        <a href="#" class="main-button">Read more</a>
+`))
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		log.Println("Error rendering add feed form:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
 func HandleSSE(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
@@ -288,8 +329,8 @@ func HandleSSE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	lastEventID := r.Header.Get("Last-Event-ID")
-	log.Printf("Last-Event-ID: %s", lastEventID)
+	//lastEventID := r.Header.Get("Last-Event-ID")
+	//log.Printf("Last-Event-ID: %s", lastEventID)
 	messageChan := make(chan string)
 
 	mu.Lock()
@@ -310,6 +351,7 @@ func HandleSSE(w http.ResponseWriter, r *http.Request) {
 	defer ticker.Stop()
 
 	var eventID int64 = time.Now().UnixNano()
+	//log.Printf("Sending event with ID: %d", eventID)
 	for {
 		select {
 		case msg := <-messageChan:
@@ -325,7 +367,6 @@ func HandleSSE(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
-
 func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -336,9 +377,10 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 	if sortFilter == "" {
 		sortFilter = "desc"
 	}
+	channelTitle = fmt.Sprintf("All news for the last %d hours", int(timeFilter.Hours()))
 
 	loading := len(filterItems) == 0
-	uniqueItems, uniqueСounts := utils.GetUniqueItems(filterItems)
+	uniqueItems := utils.GetUniqueItems(filterItems)
 
 	tmpl := template.Must(template.New("news").Funcs(template.FuncMap{
 		"truncate": func(html template.HTML, length int) string {
@@ -348,21 +390,19 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 			return t.Format("02.01.2006 15:04:05")
 		},
 	}).Parse(`
-        {{ if .loading }}
-        <div id="loading" class="loading">
-            <h3>Loading...</h3>
-        </div>
-        {{ else }}
-        {{ range .newsItems }}
-        <div class="feed-item">
-            <div class="feed-info">
-                <h3>{{.Title}}</h3>
-                <p>{{ truncate .Description 150 }}</p>
-                <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> &#8226 {{ formatDate .PubDate }}</span>
+            {{ if .loading }}
+            <div id="loading" class="loading">
+                <h3>Loading...</h3>
             </div>
-        </div>
-        {{ end }}
-        {{ end }}
+            {{ else }}
+            {{ range .newsItems }}
+            <div class="feed-item">
+                <h3 class="feed-title">{{.Title}}</h3>
+                <p class="feed-description">{{ truncate .Description 150 }}</p>
+                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+             </div>
+            {{ end }}
+            {{ end }}
     `))
 
 	var feedViewHTML bytes.Buffer
@@ -375,20 +415,20 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
+	//log.Printf("HandleLoadNews -mainitems: items %d, Filtered: %d", len(newsItems), len(filterItems))
 	response := map[string]interface{}{
-		"feedViewHTML":    feedViewHTML.String(),
-		"totalCount":      len(filterItems),
-		"timeFilterValue": int(timeFilter.Hours()),
-		"sortFilter":      sortFilter,
-		"uniqueItems":     uniqueItems,
-		"uniqueCounts":    uniqueСounts,
+		"feedViewHTML":      feedViewHTML.String(),
+		"totalCount":        len(filterItems),
+		"timeFilterValue":   int(timeFilter.Hours()),
+		"sortFilter":        sortFilter,
+		"uniqueItems":       uniqueItems.Items,
+		"uniqueCounts":      uniqueItems.Counts,
+		"uniqueFaviconURLs": uniqueItems.FaviconURLs,
 	}
-	log.Printf("HandleLoadNews - Filtered: items %d, uniqueCounts: %d", len(filterItems), len(uniqueСounts))
+	//log.Printf("HandleLoadNews - Filtered: items %d, uniqueCounts: %d", len(filterItems), len(uniqueСounts))
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
-
 func HandleFilterNewsByLink(w http.ResponseWriter, r *http.Request) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -401,7 +441,11 @@ func HandleFilterNewsByLink(w http.ResponseWriter, r *http.Request) {
 
 	filteredByLink := utils.FilterNewsByLink(filterItems, linkQuery)
 
-	uniqueItems, uniqueCounts := utils.GetUniqueItems(filterItems)
+	if len(filteredByLink) > 0 {
+		channelTitle = filteredByLink[0].ChannelTitle
+		log.Println("Channel Title:", channelTitle)
+	}
+	uniqueItems := utils.GetUniqueItems(filterItems)
 
 	tmpl := template.Must(template.New("news").
 		Funcs(template.FuncMap{
@@ -412,15 +456,13 @@ func HandleFilterNewsByLink(w http.ResponseWriter, r *http.Request) {
 				return t.Format("02.01.2006 15:04:05")
 			},
 		}).Parse(`
-        {{ range . }}
-        <div class="feed-item">
-            <div class="feed-info">
-                <h3>{{.Title}}</h3>
-                <p>{{ truncate .Description 150 }}</p>
-                <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> • {{ formatDate .PubDate }}</span>
-            </div>
-        </div>
-        {{ end }}
+           {{ range . }}
+            <div class="feed-item">
+                <h3 class="feed-title">{{.Title}}</h3>
+                <p class="feed-description">{{ truncate .Description 150 }}</p>
+                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+             </div>
+            {{ end }}
     `))
 
 	var feedViewHTML bytes.Buffer
@@ -431,12 +473,14 @@ func HandleFilterNewsByLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := map[string]interface{}{
-		"feedViewHTML": feedViewHTML.String(),
-		"totalCount":   len(filterItems),
-		"uniqueItems":  uniqueItems,
-		"uniqueCounts": uniqueCounts,
+		"feedViewHTML":      feedViewHTML.String(),
+		"totalCount":        len(filterItems),
+		"uniqueItems":       uniqueItems.Items,
+		"uniqueCounts":      uniqueItems.Counts,
+		"uniqueFaviconURLs": uniqueItems.FaviconURLs,
+		"channelTitle":      channelTitle,
 	}
-	log.Printf("HandleSortNewsByLink - Filtered: items %d, uniqueCounts: %d", len(filterItems), len(uniqueCounts))
+	//log.Printf("HandleSortNewsByLink - Filtered: items %d, uniqueCounts: %d", len(filterItems), len(uniqueItems.Counts))
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Println("Error encoding JSON:", err)

@@ -3,12 +3,18 @@ package utils
 import (
 	"fmt"
 	"html/template"
-	"log"
+	"net/url"
 	"news-aggregator/models"
 	"sort"
 	"strings"
 	"time"
 )
+
+type UniqueItemsResult struct {
+	Items       []models.NewsItem
+	Counts      map[string]int
+	FaviconURLs map[string]string
+}
 
 func StripHTMLTags(html string) string {
 	var result strings.Builder
@@ -60,13 +66,13 @@ func FilterNewsByTime(newsItems []models.NewsItem, timeFilter time.Duration, sor
 		}
 	}
 
-	log.Printf("FilterNewsByTime - TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
-		timeFilter, sortFilter, len(newsItems), len(filteredItems))
+	// log.Printf("FilterNewsByTime - TimeFilter: %v, SortFilter: %s, Total news items: %d, Filtered items: %d\n",
+	// 	timeFilter, sortFilter, len(newsItems), len(filteredItems))
 
 	return filteredItems
 }
 
-func SortNewsByDate(filteredItems []models.NewsItem, timeFilter time.Duration, sortFilter string) []models.NewsItem {
+func SortByDirection(filteredItems []models.NewsItem, timeFilter time.Duration, sortFilter string) []models.NewsItem {
 	sort.Slice(filteredItems, func(i, j int) bool {
 		if sortFilter == "asc" {
 			return filteredItems[i].PubDate.Before(filteredItems[j].PubDate)
@@ -74,8 +80,8 @@ func SortNewsByDate(filteredItems []models.NewsItem, timeFilter time.Duration, s
 		return filteredItems[i].PubDate.After(filteredItems[j].PubDate)
 	})
 
-	log.Printf("SortNewsByDate - TimeFilter: %v, SortFilter: %s, Filtered items: %d\n",
-		timeFilter, sortFilter, len(filteredItems))
+	// log.Printf("SortNewsByDate - TimeFilter: %v, SortFilter: %s, Filtered items: %d\n",
+	// 	timeFilter, sortFilter, len(filteredItems))
 
 	return filteredItems
 }
@@ -110,13 +116,15 @@ func TruncateDescription(description template.HTML, maxLen int) template.HTML {
 	return template.HTML(strings.TrimSpace(truncated) + " …")
 }
 
-func GetUniqueItems(items []models.NewsItem) ([]models.NewsItem, map[string]int) {
+func GetUniqueItems(items []models.NewsItem) UniqueItemsResult {
 	uniqueLinks := make(map[string]models.NewsItem)
 	uniqueCounts := make(map[string]int)
+	faviconURLs := make(map[string]string)
 
 	for _, item := range items {
 		if _, exists := uniqueLinks[item.ChannelLink]; !exists {
 			uniqueLinks[item.ChannelLink] = item
+			faviconURLs[item.ChannelLink] = getFaviconURL(item.ChannelLink)
 		}
 		uniqueCounts[item.ChannelLink]++
 	}
@@ -130,5 +138,17 @@ func GetUniqueItems(items []models.NewsItem) ([]models.NewsItem, map[string]int)
 		return uniqueCounts[uniqueItems[i].ChannelLink] > uniqueCounts[uniqueItems[j].ChannelLink]
 	})
 
-	return uniqueItems, uniqueCounts
+	return UniqueItemsResult{
+		Items:       uniqueItems,
+		Counts:      uniqueCounts,
+		FaviconURLs: faviconURLs,
+	}
+}
+
+func getFaviconURL(link string) string {
+	u, err := url.Parse(link)
+	if err != nil {
+		return ""
+	}
+	return fmt.Sprintf("%s://%s/favicon.ico", u.Scheme, u.Host)
 }
