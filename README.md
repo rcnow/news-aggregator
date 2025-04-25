@@ -5,11 +5,12 @@ A simple news aggregator built with Go that fetches news from various RSS and AT
 ## Features
 
 ### Implemented
-- Responsive UI with support for desktops, tablets, and mobile devices.
+- Responsive UI with full support for desktops.
 - Light and dark themes.
 - Support for RSS and ATOM feeds.
 
 ### Planned
+- Responsive UI for tablets, and mobile devices
 - Main screen with customizable widgets.
 - Full-fledged desktop applications for Windows and Linux.
 - Support for additional feed formats.
