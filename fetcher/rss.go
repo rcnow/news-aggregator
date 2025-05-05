@@ -125,7 +125,9 @@ func ParseRSS(data []byte) []models.NewsItem {
 	// log.Printf("Channel Title: %s", rss.Title)
 	// log.Printf("Channel Link: %s", rss.Link)
 	// log.Printf("Channel Description: %s", rss.Description)
-
+	if rss.Title == "" {
+		rss.Title = "Title is missing"
+	}
 	if rss.Link == "" {
 		rss.Link = ExtractLink(data)
 		log.Println("Main link field empty or not find, trying alternative parsing -", rss.Link)

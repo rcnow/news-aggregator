@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"news-aggregator/fetcher"
 	"news-aggregator/models"
 	"news-aggregator/utils"
@@ -137,12 +138,23 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleFilterNewsBySearch(w http.ResponseWriter, r *http.Request) {
-	query := r.Header.Get("Search-Query")
+	queryEncoded := r.Header.Get("Search-Query")
+	query, err := url.QueryUnescape(queryEncoded)
+	if err != nil {
+		http.Error(w, "Failed to decode search query", http.StatusBadRequest)
+		return
+	}
+	if query == "" {
+		http.Error(w, "Search query is required", http.StatusBadRequest)
+		return
+	}
 
 	mu.Lock()
 	var filteredItems []models.NewsItem
 	for _, item := range filterItems {
-		if strings.Contains(strings.ToLower(item.Title), strings.ToLower(query)) {
+		if strings.Contains(strings.ToLower(item.Title), strings.ToLower(query)) ||
+			strings.Contains(strings.ToLower(string(item.Description)), strings.ToLower(query)) {
+			filteredItems = append(filteredItems, item)
 			filteredItems = append(filteredItems, item)
 		}
 	}
@@ -150,7 +162,6 @@ func HandleFilterNewsBySearch(w http.ResponseWriter, r *http.Request) {
 	uniqueItems := utils.GetUniqueItems(filteredItems)
 
 	var tmpl *template.Template
-	var err error
 	if len(filteredItems) == 0 {
 		tmpl = template.Must(template.New("no-news").Parse(`
         <div class="feed-item">
@@ -167,15 +178,13 @@ func HandleFilterNewsBySearch(w http.ResponseWriter, r *http.Request) {
 					return t.Format("02.01.2006 15:04:05")
 				},
 			}).Parse(`
-                {{ range . }}
-                    <div class="feed-item">
-                    <div class="feed-info">
-                        <h3>{{.Title}}</h3>
-                        <p>{{ truncate .Description 150 }}</p>
-                        <span><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> &#8226 {{ formatDate .PubDate }}</span>
-                    </div>
-                </div>
-                {{ end }}
+            {{ range . }}
+            <div class="feed-item">
+                <h3 class="feed-title">{{.Title}}</h3>
+                <p class="feed-description">{{ truncate .Description 150 }}</p>
+                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+             </div>
+            {{ end }}
         `))
 	}
 

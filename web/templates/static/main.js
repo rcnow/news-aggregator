@@ -328,7 +328,7 @@ async function filterNewsBySearch(searchValue) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Search-Query': searchValue,
+                'Search-Query': encodeURIComponent(searchValue),
             },
         });
         if (!response.ok) {
