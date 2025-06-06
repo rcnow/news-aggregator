@@ -17,7 +17,7 @@ type ErrorURL struct {
 
 var ErrorURLs []ErrorURL
 
-func FetchNews(feedURL string) []models.NewsItem {
+func FetchNews(feedURL string, category string) []models.NewsItem {
 	if feedURL == "" {
 		log.Println("Empty feed URL")
 	}
@@ -50,10 +50,10 @@ func FetchNews(feedURL string) []models.NewsItem {
 	//log.Println("Feed content:", content[:400])
 	if strings.Contains(content, "<rss") {
 		log.Println("RSS feed detected:", feedURL)
-		return ParseRSS(body)
+		return ParseRSS(body, category)
 	} else if strings.Contains(content, "<feed") {
 		log.Println("Atom feed detected", feedURL)
-		return ParseAtom(body)
+		return ParseAtom(body, category)
 	} else {
 		log.Println("Unknown feed format", feedURL)
 		return nil

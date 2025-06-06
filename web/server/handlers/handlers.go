@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"news-aggregator/config"
 	"news-aggregator/fetcher"
 	"news-aggregator/models"
 	"news-aggregator/utils"
@@ -25,6 +26,7 @@ var (
 	channelTitle string
 	mu           sync.Mutex
 	sseClients   map[chan string]bool
+	feedsConfig  []config.FeedConfig
 )
 
 func init() {
@@ -52,19 +54,18 @@ func UpdateNews() {
 	if channelTitle == "" {
 		channelTitle = fmt.Sprintf("All news for the last %d hours", int(timeFilter.Hours()))
 	}
-	feeds := []string{
-		"https://cointelegraph.com/rss",
-		"https://bitcoinmagazine.com/feed",
-		"https://feeds.bloomberg.com/markets/news.rss",
-		"https://www.reddit.com/r/birding.rss",
-		"https://habr.com/ru/rss/articles/top/daily/?fl=ru",
+	cfg, err := config.LoadConfig("config/config.na")
+	if err != nil {
+		log.Println("Error loading config:", err)
 	}
+	feedsConfig = cfg.Feeds
 
 	for {
 		var newItems []models.NewsItem
 
-		for _, feed := range feeds {
-			news := fetcher.FetchNews(feed)
+		for i, feed := range feedsConfig {
+			log.Printf("Feed %d: URL=%s, Category=%s", i+1, feed.URL, feed.Category)
+			news := fetcher.FetchNews(feed.URL, feed.Category)
 			newItems = append(newItems, news...)
 			mu.Lock()
 			newsItems = newItems

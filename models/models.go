@@ -17,4 +17,5 @@ type NewsItem struct {
 	Guid         string        `json:"guid"`
 	ChannelLink  string        `json:"channelLink"`
 	ChannelTitle string        `json:"channelTitle"`
+	Category     string        `json:"category"`
 }

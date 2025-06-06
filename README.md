@@ -51,15 +51,16 @@ cd news-aggregator
 ```
 
 ### 3. Add Your Feed Links
+Create a `config.na` file or rename `config-example.na` to `config.na`.
+Open the `config.na` file and add your RSS feed URLs to the `feed` slice. For example:
 
-Open the `handlers.go` file and add your RSS feed URLs to the `feeds` slice. For example:
-
-```go
-feeds := []string{
-    "https://cointelegraph.com/rss", // Example one
-    "https://bitcoinmagazine.com/feed", // Example two
-    "https://example.com/feed", // Add your custom feed here
-}
+```yaml
+feed:
+    url: https://example.com/rss
+    category: demo
+feed:
+    url: https://example.com/feed
+    category: world news
 ```
 
 ### 4. Run the Application

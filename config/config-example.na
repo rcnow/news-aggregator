@@ -1,0 +1,6 @@
+feed:
+    url: https://example.com/rss
+    category: demo
+feed:
+    url: https://example.com/feed
+    category: world news

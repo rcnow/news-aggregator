@@ -13,6 +13,7 @@ pkg/
 *.xml
 TODO
 *_test.go
+config.na
 
 vendor/
 

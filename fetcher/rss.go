@@ -117,7 +117,7 @@ type Content struct {
 	Encoded string `xml:",chardata"`
 }
 
-func ParseRSS(data []byte) []models.NewsItem {
+func ParseRSS(data []byte, category string) []models.NewsItem {
 	var rss RSS
 	if err := xml.Unmarshal(data, &rss); err != nil {
 		return nil
@@ -153,6 +153,7 @@ func ParseRSS(data []byte) []models.NewsItem {
 			Guid:         item.GUID.Value,
 			ChannelLink:  rss.Link,
 			ChannelTitle: rss.Title,
+			Category:     category,
 		})
 	}
 

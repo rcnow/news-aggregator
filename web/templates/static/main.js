@@ -81,7 +81,7 @@ function setupSSE() {
             console.log(MESSAGES.SSE_PING);
         });
 
-        eventSource.onerror = (err) => {S
+        eventSource.onerror = (err) => {
             console.error(MESSAGES.SSS_ERROR, err);
             if (eventSource) {
                 eventSource.close();
@@ -242,7 +242,7 @@ async function loadAllNews() {
                 faviconSpan.innerHTML = fallbackSvg;
             };
             faviconSpan.appendChild(faviconImg);
-            link.innerHTML = `${item.channelTitle} <span class="count">${data.uniqueCounts[item.channelLink]}</span>`;
+            link.innerHTML = `${item.channelTitle} <div class="info"><span class="category">${item.category}</span> <span class="count">${data.uniqueCounts[item.channelLink]}</span></div>`;
             link.prepend(faviconSpan);
             elementList.uniqueLink.appendChild(link);
             const svg = document.getElementById('sort-icon');

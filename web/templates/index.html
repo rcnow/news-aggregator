@@ -82,8 +82,8 @@
             </svg>
             <input type="text" id="searchInput" placeholder="Search news...">
         </div>
-        <nav class="menu-header">
-            <a href="#" id="sort-time">
+        <nav class="menu-header-main">
+            <button type="button" id="sort-time">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24">
                     <path fill="currentColor" fill-rule="evenodd" d="M24 0H0v3h24V0Zm-4 21H4v3h16v-3ZM3 14h18v3H3v-3Zm19-7H2v3h20V7Z" clip-rule="evenodd"/>
                 </svg>
@@ -111,8 +111,8 @@
                         <span class="radio-label">1 hour</span>
                     </label>
                 </div>
-            </a>
-            <a href="#" id="sort-asc-desc" data-sort="{{.sortFilter}}">
+            </button>
+            <button type="button"  id="sort-asc-desc" data-sort="{{.sortFilter}}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" id="sort-icon">
                     {{ if eq .sortFilter "desc" }}
                     <path fill="currentColor" fill-rule="evenodd" d="M9 1a1 1 0 0 1 2 0v19.996l7.19-7.19a.854.854 0 0 1 1.206 1.208L10.76 23.65a.998.998 0 0 1-1.464.06L.604 15.018A.854.854 0 1 1 1.81 13.81L9 21V1Z" clip-rule="evenodd"/>
@@ -121,7 +121,7 @@
                     {{ end}}
                 </svg>
                 <p>Sort</p>
-            </a>
+            </button>
         </div>
         </nav>
         <section class="feed-view">

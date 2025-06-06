@@ -79,7 +79,7 @@ type AtomContent struct {
 	InnerXML string `xml:",innerxml"`
 }
 
-func ParseAtom(data []byte) []models.NewsItem {
+func ParseAtom(data []byte, category string) []models.NewsItem {
 	var atom AtomFeed
 	if err := xml.Unmarshal(data, &atom); err != nil {
 		return nil
@@ -114,6 +114,7 @@ func ParseAtom(data []byte) []models.NewsItem {
 			Content:      template.HTML(entry.Content.Text),
 			ChannelLink:  channelLink,
 			ChannelTitle: atom.Title.Text,
+			Category:     category,
 		})
 	}
 
