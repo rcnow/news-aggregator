@@ -18,4 +18,5 @@ type NewsItem struct {
 	ChannelLink  string        `json:"channelLink"`
 	ChannelTitle string        `json:"channelTitle"`
 	Category     string        `json:"category"`
+	Favicon      string        `json:"favicon"`
 }

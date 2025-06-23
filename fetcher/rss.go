@@ -130,13 +130,13 @@ func ParseRSS(data []byte, category string) []models.NewsItem {
 	}
 	if rss.Link == "" {
 		rss.Link = ExtractLink(data)
-		log.Println("Main link field empty or not find, trying alternative parsing -", rss.Link)
-
+		log.Println("Main link field empty or not find, trying alternative parsing -", rss.Title)
 	}
 
 	var newsItems []models.NewsItem
 	for _, item := range rss.Items {
 		cleanedDescription := utils.StripHTMLTags(string(item.Description))
+		var pubTime time.Time
 		pubTime, err := utils.FormatDate(item.PubDate)
 		if err != nil {
 			log.Printf("Failed to parse date '%s' for item '%s': %v",
@@ -154,13 +154,24 @@ func ParseRSS(data []byte, category string) []models.NewsItem {
 			ChannelLink:  rss.Link,
 			ChannelTitle: rss.Title,
 			Category:     category,
+			Favicon:      utils.GetFaviconURL(rss.Link),
 		})
 	}
 
 	return newsItems
 }
+
 func ExtractLink(data []byte) string {
 	decoder := xml.NewDecoder(strings.NewReader(string(data)))
+
+	var (
+		mainLink  string
+		atomLink  string
+		imageLink string
+	)
+
+	inImage := false
+
 	for {
 		tok, err := decoder.Token()
 		if err != nil {
@@ -169,15 +180,46 @@ func ExtractLink(data []byte) string {
 			}
 			break
 		}
+
 		switch elem := tok.(type) {
 		case xml.StartElement:
-			if elem.Name.Local == "link" {
-				var link string
-				if err := decoder.DecodeElement(&link, &elem); err == nil {
-					return strings.TrimSpace(link)
+			switch elem.Name.Local {
+			case "image":
+				inImage = true
+			case "link":
+				if inImage && elem.Name.Space == "" {
+					var link string
+					if err := decoder.DecodeElement(&link, &elem); err == nil {
+						imageLink = strings.TrimSpace(link)
+					}
+				} else {
+					if elem.Name.Space == "" {
+						var link string
+						if err := decoder.DecodeElement(&link, &elem); err == nil {
+							mainLink = strings.TrimSpace(link)
+							return mainLink
+						}
+					} else if elem.Name.Space == "http://www.w3.org/2005/Atom" {
+						for _, attr := range elem.Attr {
+							if attr.Name.Local == "href" {
+								atomLink = attr.Value
+								break
+							}
+						}
+					}
 				}
+			}
+		case xml.EndElement:
+			if elem.Name.Local == "image" {
+				inImage = false
 			}
 		}
 	}
-	return ""
+
+	if mainLink != "" {
+		return mainLink
+	} else if atomLink != "" {
+		return atomLink
+	}
+	return imageLink
 }

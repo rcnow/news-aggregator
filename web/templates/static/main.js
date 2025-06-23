@@ -387,7 +387,7 @@ async function filterNewsByTime(timeValue) {
                 faviconSpan.innerHTML = fallbackSvg;
             };
             faviconSpan.appendChild(faviconImg);
-            link.innerHTML = `${item.channelTitle} <span class="count">${data.uniqueCounts[item.channelLink]}</span>`;
+            link.innerHTML = `${item.channelTitle} <div class="info"><span class="category">${item.category}</span> <span class="count">${data.uniqueCounts[item.channelLink]}</span></div>`;
             link.prepend(faviconSpan);
             elementList.uniqueLink.appendChild(link);
 

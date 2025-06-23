@@ -25,8 +25,8 @@ func FetchNews(feedURL string, category string) []models.NewsItem {
 		Timeout: time.Second * 10,
 	}
 	req, _ := http.NewRequest("GET", feedURL, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0")
-	req.Header.Set("Accept", "application/xml")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
 
 	resp, err := client.Do(req)
 	if err != nil {

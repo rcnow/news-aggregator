@@ -3,8 +3,11 @@ package utils
 import (
 	"fmt"
 	"html/template"
+	"io"
+	"net/http"
 	"net/url"
 	"news-aggregator/models"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -44,6 +47,8 @@ func FormatDate(dateStr string) (time.Time, error) {
 		time.RFC1123,
 		time.RFC822,
 		time.RFC822Z,
+		"Mon, 02 Jan 2006 15:04:05 -0700",
+		"Mon, 02 Jan 2006 15:04:05 +0000",
 	}
 
 	for _, format := range formats {
@@ -124,7 +129,11 @@ func GetUniqueItems(items []models.NewsItem) UniqueItemsResult {
 	for _, item := range items {
 		if _, exists := uniqueLinks[item.ChannelLink]; !exists {
 			uniqueLinks[item.ChannelLink] = item
-			faviconURLs[item.ChannelLink] = getFaviconURL(item.ChannelLink)
+			if item.Favicon != "" {
+				faviconURLs[item.ChannelLink] = item.Favicon
+			} else {
+				faviconURLs[item.ChannelLink] = GetFaviconURL(item.ChannelLink)
+			}
 		}
 		uniqueCounts[item.ChannelLink]++
 	}
@@ -145,10 +154,47 @@ func GetUniqueItems(items []models.NewsItem) UniqueItemsResult {
 	}
 }
 
-func getFaviconURL(link string) string {
+var faviconCache = make(map[string]string)
+
+func GetFaviconURL(link string) string {
 	u, err := url.Parse(link)
 	if err != nil {
 		return ""
 	}
-	return fmt.Sprintf("%s://%s/favicon.ico", u.Scheme, u.Host)
+	host := u.Host
+
+	// Кеш
+	if cached, ok := faviconCache[host]; ok {
+		return cached
+	}
+
+	// Попытка достать favicon из <link rel="icon"> в HTML
+	home := fmt.Sprintf("%s://%s", u.Scheme, host)
+	client := http.Client{Timeout: 3 * time.Second} // добавим таймаут
+	resp, err := client.Get(home)
+	if err == nil {
+		defer resp.Body.Close()
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err == nil {
+			body := string(bodyBytes)
+			re := regexp.MustCompile(`(?i)<link[^>]+rel=["'][^"']*icon[^"']*["'][^>]*href=["']?([^"'>\s]+)["']?`)
+			matches := re.FindStringSubmatch(body)
+			if len(matches) >= 2 {
+				iconHref := matches[1]
+				iconURL, err := url.Parse(iconHref)
+				if err == nil {
+					if !iconURL.IsAbs() {
+						iconURL = u.ResolveReference(iconURL)
+					}
+					faviconCache[host] = iconURL.String()
+					return iconURL.String()
+				}
+			}
+		}
+	}
+
+	// fallback на стандартный путь
+	defaultFavicon := fmt.Sprintf("%s/favicon.ico", home)
+	faviconCache[host] = defaultFavicon
+	return defaultFavicon
 }

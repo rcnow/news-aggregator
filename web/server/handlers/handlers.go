@@ -455,7 +455,7 @@ func HandleFilterNewsByLink(w http.ResponseWriter, r *http.Request) {
 		channelTitle = filteredByLink[0].ChannelTitle
 		log.Println("Channel Title:", channelTitle)
 	}
-	uniqueItems := utils.GetUniqueItems(filterItems)
+	uniqueItems := utils.GetUniqueItems(filteredByLink)
 
 	tmpl := template.Must(template.New("news").
 		Funcs(template.FuncMap{

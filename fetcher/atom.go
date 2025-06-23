@@ -95,26 +95,40 @@ func ParseAtom(data []byte, category string) []models.NewsItem {
 
 	var newsItems []models.NewsItem
 	for _, entry := range atom.Entries {
-		pubTime, err := utils.FormatDate(entry.Updated)
-		if err != nil {
-			log.Printf("Failed to parse date '%s' for entry '%s': %v",
-				entry.Updated, entry.Title, err)
+		var dateStr string
+		if entry.Published != nil {
+			dateStr = entry.Published.Format(time.RFC3339)
+		} else if entry.Updated != "" {
+			dateStr = entry.Updated
+		}
+
+		if dateStr == "" {
+			log.Printf("Failed to parse date '' for entry '%s': empty date string", entry.Title.Text)
 			continue
 		}
 
+		pubTime, err := utils.FormatDate(dateStr)
+		if err != nil {
+			log.Printf("Failed to parse date '%s' for entry '%s': %v", dateStr, entry.Title.Text, err)
+			continue
+		}
 		var cleanedDescription string
+
 		if entry.Content != nil {
 			cleanedDescription = utils.StripHTMLTags(entry.Content.Text)
+		} else if entry.Summary != nil {
+			cleanedDescription = utils.StripHTMLTags(entry.Summary.Text)
 		}
 		newsItems = append(newsItems, models.NewsItem{
 			Title:        entry.Title.Text,
 			Description:  template.HTML(cleanedDescription),
 			Link:         channelLink,
 			PubDate:      pubTime,
-			Content:      template.HTML(entry.Content.Text),
+			Content:      template.HTML(cleanedDescription),
 			ChannelLink:  channelLink,
 			ChannelTitle: atom.Title.Text,
 			Category:     category,
+			Favicon:      utils.GetFaviconURL(channelLink),
 		})
 	}
 

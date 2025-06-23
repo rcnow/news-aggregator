@@ -33,7 +33,7 @@
   --text-color-active: #ffffff;
   --hover-bg: #bb86fc;
   --hover-link: #bb86fc;
-  --count-bg: #1e1e1e;
+  --count-bg: #282828;
   --box-shadows: 1px 1px 7px 0px var(--hover-link);
 }
 * {
@@ -192,6 +192,7 @@ body {
   border-radius: var(--radius);
   transition: color 0.3s ease;
   border: none;
+  cursor: pointer;
 }
 .menu-header a:hover,
 .menu-header-main button:hover {
@@ -264,18 +265,50 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
-.link-list,
-.unique-link-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap-default);
-    padding: var(--padding-default);
-    border-top: var(--border);
-    flex-wrap: nowrap;
-    align-content: space-around;
-    justify-content: flex-start;
-    align-items: stretch;
+.link-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-default);
+  padding: var(--padding-default);
+  border-top: var(--border);
+  flex-wrap: nowrap;
+  align-content: space-around;
+  justify-content: flex-start;
+  align-items: stretch;
+
 }
+.unique-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-default);
+  padding: var(--padding-default);
+  border-top: var(--border);
+  flex-wrap: nowrap;
+  align-content: space-around;
+  justify-content: flex-start;
+  align-items: stretch;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-color) var(--panel-bg);
+}
+.unique-link-list::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+.unique-link-list::-webkit-scrollbar-track {
+  background: var(--panel-bg);
+  border-radius: var(--radius);
+}
+.unique-link-list::-webkit-scrollbar-thumb {
+  background: var(--text-color);
+  border-radius: var(--radius);
+  transition: background-color 0.3s ease;
+}
+.unique-link-list::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-link);
+}
+
 .link-list a,
 .unique-link-list a{
   text-decoration: none;
@@ -559,7 +592,7 @@ input:checked + .slider:before {
     align-content: space-around;
     justify-content: space-between;
   }
-    .menu-header-main {
+  .menu-header-main {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -581,7 +614,7 @@ input:checked + .slider:before {
     border-right: var(--border);
   }
   .panel-header {
-    margin-top: 50px;
+    margin-top: 69px;
   }
 
   .left-panel {

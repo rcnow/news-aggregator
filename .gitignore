@@ -14,7 +14,7 @@ pkg/
 TODO
 *_test.go
 config.na
-
+*tool
 vendor/
 
 
