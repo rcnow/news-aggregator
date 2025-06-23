@@ -183,7 +183,7 @@ func HandleFilterNewsBySearch(w http.ResponseWriter, r *http.Request) {
             <div class="feed-item">
                 <h3 class="feed-title">{{.Title}}</h3>
                 <p class="feed-description">{{ truncate .Description 150 }}</p>
-                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+                <span class="feed-info"><a href="{{.ItemLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
              </div>
             {{ end }}
         `))
@@ -248,7 +248,7 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
             <div class="feed-item">
                 <h3 class="feed-title">{{.Title}}</h3>
                 <p class="feed-description">{{ truncate .Description 150 }}</p>
-                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+                <span class="feed-info"><a href="{{.ItemLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
              </div>
             {{ end }}
     `))
@@ -277,57 +277,6 @@ func HandleSortNews(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func HandleHomeView(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.New("home-view").Parse(`
-     <h2 class="main-title">Home</h2>
-        <p class="main-description">news news news news news </p>
-        <a href="#" class="main-button">Read more</a>
-`))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		log.Println("Error rendering add feed form:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
-}
-func HandleSettingView(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.New("setting-view").Parse(`
-     <h2 class="main-title">Setting</h2>
-        <p class="main-description">news news news news news </p>
-        <a href="#" class="main-button">Read more</a>
-`))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		log.Println("Error rendering add feed form:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
-}
-func HandleAddFeedView(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.New("add-feed-view").Parse(`
-	            <h2>Add new feed </h2>
-            <div class="main-info">
-                <p>add feed</p>
-				<input type="text">
-                <a href="#" class="button">add feed</a>
-            </div>
-`))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		log.Println("Error rendering add feed form:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
-}
-func HandleHelpView(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.New("help-view").Parse(`
-     <h2 class="main-title">Help</h2>
-        <p class="main-description">news news news news news </p>
-        <a href="#" class="main-button">Read more</a>
-`))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		log.Println("Error rendering add feed form:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
-}
 func HandleSSE(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
@@ -409,7 +358,7 @@ func HandleLoadNews(w http.ResponseWriter, r *http.Request) {
             <div class="feed-item">
                 <h3 class="feed-title">{{.Title}}</h3>
                 <p class="feed-description">{{ truncate .Description 150 }}</p>
-                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+                <span class="feed-info"><a href="{{.ItemLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
              </div>
             {{ end }}
             {{ end }}
@@ -470,7 +419,7 @@ func HandleFilterNewsByLink(w http.ResponseWriter, r *http.Request) {
             <div class="feed-item">
                 <h3 class="feed-title">{{.Title}}</h3>
                 <p class="feed-description">{{ truncate .Description 150 }}</p>
-                <span class="feed-info"><a href="{{.ChannelLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
+                <span class="feed-info"><a href="{{.ItemLink}}" target="_blank">{{.ChannelTitle}}</a> <p>{{ formatDate .PubDate }}</p></span>
              </div>
             {{ end }}
     `))

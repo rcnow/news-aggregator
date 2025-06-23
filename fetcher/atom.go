@@ -87,7 +87,7 @@ func ParseAtom(data []byte, category string) []models.NewsItem {
 
 	var channelLink string
 	for _, link := range atom.Links {
-		if link.Rel == "alternate" {
+		if link.Rel == "alternate" || link.Rel == "" {
 			channelLink = link.Href
 			break
 		}
@@ -95,6 +95,14 @@ func ParseAtom(data []byte, category string) []models.NewsItem {
 
 	var newsItems []models.NewsItem
 	for _, entry := range atom.Entries {
+		var itemLink string
+		for _, link := range entry.Links {
+			if link.Rel == "alternate" || link.Rel == "" {
+				itemLink = link.Href
+				break
+			}
+		}
+
 		var dateStr string
 		if entry.Published != nil {
 			dateStr = entry.Published.Format(time.RFC3339)
@@ -112,20 +120,21 @@ func ParseAtom(data []byte, category string) []models.NewsItem {
 			log.Printf("Failed to parse date '%s' for entry '%s': %v", dateStr, entry.Title.Text, err)
 			continue
 		}
-		var cleanedDescription string
 
+		var cleanedDescription string
 		if entry.Content != nil {
 			cleanedDescription = utils.StripHTMLTags(entry.Content.Text)
 		} else if entry.Summary != nil {
 			cleanedDescription = utils.StripHTMLTags(entry.Summary.Text)
 		}
+
 		newsItems = append(newsItems, models.NewsItem{
 			Title:        entry.Title.Text,
 			Description:  template.HTML(cleanedDescription),
-			Link:         channelLink,
+			ChannelLink:  channelLink,
 			PubDate:      pubTime,
 			Content:      template.HTML(cleanedDescription),
-			ChannelLink:  channelLink,
+			ItemLink:     itemLink,
 			ChannelTitle: atom.Title.Text,
 			Category:     category,
 			Favicon:      utils.GetFaviconURL(channelLink),

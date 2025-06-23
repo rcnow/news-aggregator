@@ -5,10 +5,6 @@ const fallbackSvg = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox
 const arrowUp = 'M11.354 23a1 1 0 0 1-2 0V3.004l-7.19 7.19A.854.854 0 0 1 .957 8.986L9.594.35a.998.998 0 0 1 1.464-.06l8.692 8.692a.854.854 0 0 1-1.207 1.207L11.353 3v20Z'
 const arrowDown = 'M9 1a1 1 0 0 1 2 0v19.996l7.19-7.19a.854.854 0 0 1 1.206 1.208L10.76 23.65a.998.998 0 0 1-1.464.06L.604 15.018A.854.854 0 1 1 1.81 13.81L9 21V1Z'
 const elementList = {
-    homeButton: document.getElementById('home-link'),
-    settingButton: document.getElementById('setting-link'),
-    addFeedButton: document.getElementById('add-feed-link'),
-    helpButton: document.getElementById('help-link'),
     showAllNews: document.getElementById('show-all-news'),
     uniqueLink: document.querySelector('.unique-link-list'),
     themeToggle: document.querySelector('.theme-toggle input[type="checkbox"]'),
@@ -112,81 +108,7 @@ function setActiveButton(activeButton) {
     });
     activeButton.classList.add('active');
 }
-//home
-elementList.homeButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    setActiveButton(this);
-    HomeView();
-});
-async function HomeView() {
-    try {
-        const response = await fetch(API_ENDPOINTS.HOME_VIEW)
-        if (!response.ok) {
-            throw new Error(MESSAGES.NETWORK_ERROR);
-        }
-        const data = await response.text();
-        elementList.mainView.innerHTML = data;
-    }
-    catch (error) {
-        console.error('Error HomeView:', error);
-    }
-};
-//setting
-elementList.settingButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    setActiveButton(this);
-    SettingView();
-});
-async function SettingView() {
-    try {
-        const response = await fetch(API_ENDPOINTS.SETTING_VIEW)
-        if (!response.ok) {
-            throw new Error(MESSAGES.NETWORK_ERROR);
-        }
-        const data = await response.text();
-        elementList.mainView.innerHTML = data;
-    }
-    catch (error) {
-        console.error('Error SettingView:', error);
-    }
-};
-//add
-elementList.addFeedButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    setActiveButton(this);
-    AddNewFeedView();
-});
-async function AddNewFeedView() {
-    try {
-        const response = await fetch(API_ENDPOINTS.ADD_FEED)
-        if (!response.ok) {
-            throw new Error(MESSAGES.NETWORK_ERROR);
-        }
-        const data = await response.text();
-        elementList.mainView.innerHTML = data;
-    }
-    catch (error) {
-        console.error('Error AddNewFeedView:', error);
-    }
-};
-//help
-elementList.helpButton.addEventListener('click', function (e) {
-    e.preventDefault();
-    setActiveButton(this);
-    HelpView();
-});
-async function HelpView() {
-    try {
-        const response = await fetch(API_ENDPOINTS.HELP_VIEW)
-        if (!response.ok) {
-            throw new Error(MESSAGES.NETWORK_ERROR);
-        }
-        const data = await response.text();
-        elementList.mainView.innerHTML = data;
-    }
-    catch (error) {
-    }
-}
+
 //theme switch
 elementList.themeToggle.addEventListener('change', function(e) {
     e.preventDefault();
